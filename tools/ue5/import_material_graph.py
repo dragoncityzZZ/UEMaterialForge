@@ -97,6 +97,8 @@ SHADING_MODELS = {
     "Cloth": "MSM_CLOTH",
     "Eye": "MSM_EYE",
     "ClearCoat": "MSM_CLEAR_COAT",
+    "SingleLayerWater": "MSM_SINGLE_LAYER_WATER",
+    "ThinTranslucent": "MSM_THIN_TRANSLUCENT",
 }
 
 TRANSLUCENCY_LIGHTING_MODES = {

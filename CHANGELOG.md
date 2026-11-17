@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.6.2 — 2026-11-18
+
+### 新增
+
+- Material Settings 的 Shading Model 增加 `SingleLayerWater` 和 `ThinTranslucent`，
+  与新增的单层水 / 薄半透明材质输出节点配套。
+- UE5 导入桥接的 `SHADING_MODELS` 增加 `MSM_SINGLE_LAYER_WATER` 和
+  `MSM_THIN_TRANSLUCENT` 映射。
+
 ## 2.6.1 — 2026-11-18
 
 ### 新增

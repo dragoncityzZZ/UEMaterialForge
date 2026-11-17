@@ -824,6 +824,8 @@ const std::unordered_map<std::string_view, const char*> kChinese = {
     {"Single Layer Water Material Output", "单层水材质输出"},
     {"Thin Translucent Material Output", "薄半透明材质输出"},
     {"Clear Coat Normal Custom Output", "清漆法线自定义输出"},
+    {"SingleLayerWater", "单层水"},
+    {"ThinTranslucent", "薄半透明"},
     {"This node has no numeric output to preview.", "该节点没有可预览的数值输出。"},
     {"Node preview shader generation failed. Open the GLSL tab for details.", "节点预览着色器生成失败，请打开 GLSL 标签查看详情。"},
     {"Node preview shader compile failed. Open the GLSL tab for details.", "节点预览着色器编译失败，请打开 GLSL 标签查看详情。"},

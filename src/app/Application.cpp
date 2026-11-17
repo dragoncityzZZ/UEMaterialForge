@@ -5360,7 +5360,8 @@ void Application::DrawMaterialSettings() {
                                              "Additive", "Modulate", "AlphaComposite"};
     static const char* const shadingModels[] = {
         "DefaultLit", "Unlit", "Subsurface", "SubsurfaceProfile",
-        "TwoSidedFoliage", "Hair", "Cloth", "Eye", "ClearCoat"};
+        "TwoSidedFoliage", "Hair", "Cloth", "Eye", "ClearCoat",
+        "SingleLayerWater", "ThinTranslucent"};
     static const char* const translucencyModes[] = {
         "SurfaceForwardShading", "SurfaceTranslucencyVolume",
         "VolumetricNonDirectional", "VolumetricDirectional",

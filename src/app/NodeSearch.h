@@ -37,6 +37,12 @@ inline const char* NodeSearchAliases(const std::string& type) {
     if (type == "ScalarParameter") return u8"标量参数";
     if (type == "VectorParameter") return u8"向量参数 颜色参数";
     if (type == "MaterialOutput") return u8"材质输出 根节点";
+    if (type == "SingleLayerWaterMaterialOutput")
+        return u8"单层水 水材质 水体 散射 吸收 水下颜色 water";
+    if (type == "ThinTranslucentMaterialOutput")
+        return u8"薄半透明 玻璃 透射 表面覆盖 thin translucent";
+    if (type == "ClearCoatNormalCustomOutput")
+        return u8"清漆 法线 自定义输出 clear coat";
     if (type == "FunctionInput") return u8"函数输入 蓝图函数";
     if (type == "FunctionOutput") return u8"函数输出 蓝图函数";
     return "";

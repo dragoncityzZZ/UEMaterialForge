@@ -1489,6 +1489,20 @@ void NodeGraphView::PasteNodesAtMouse() {
     const float scale = CanvasUiScale();
     const ImVec2 mouse(mouseCanvas.x / scale, mouseCanvas.y / scale);
 
+    // Clipboard positions are normalized to the top-left of the copied group.
+    // Center the whole group on the cursor instead of putting its top-left
+    // corner under the mouse; otherwise large selections feel shifted down/right.
+    float clipboardWidth = 0.0f;
+    float clipboardHeight = 0.0f;
+    for (const ClipboardNode& item : m_ClipboardNodes) {
+        const float width = item.size.x > 0.0f ? item.size.x : 280.0f;
+        const float height = item.size.y > 0.0f ? item.size.y : 160.0f;
+        clipboardWidth = std::max(clipboardWidth, item.position.x + width);
+        clipboardHeight = std::max(clipboardHeight, item.position.y + height);
+    }
+    const Vec2 origin(mouse.x - clipboardWidth * 0.5f,
+                      mouse.y - clipboardHeight * 0.5f);
+
     std::vector<NodeId> created;
     created.reserve(m_ClipboardNodes.size());
     for (const ClipboardNode& item : m_ClipboardNodes) {
@@ -1497,7 +1511,7 @@ void NodeGraphView::PasteNodesAtMouse() {
         if (definition->isMaterialOutput && m_Graph.FindMaterialOutput()) continue;
         Node& node = m_Graph.AddNode(
             *definition,
-            Vec2(mouse.x + item.position.x, mouse.y + item.position.y));
+            Vec2(origin.x + item.position.x, origin.y + item.position.y));
         node.properties = item.properties;
         if (definition->isComment) {
             node.size = item.size;

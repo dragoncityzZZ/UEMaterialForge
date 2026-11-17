@@ -79,6 +79,76 @@
       "ueClass": "Material"
     },
     {
+      "category": "Output",
+      "description": "Writes single-layer water volume properties: scattering, absorption, phase function and color behind the water surface.",
+      "displayName": "Single Layer Water Material Output",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Scattering Coefficients",
+          "type": "Vector3"
+        },
+        {
+          "name": "Absorption Coefficients",
+          "type": "Vector3"
+        },
+        {
+          "name": "PhaseG",
+          "type": "Float"
+        },
+        {
+          "name": "Color Scale Behind Water",
+          "type": "Vector3"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [],
+      "properties": [],
+      "type": "SingleLayerWaterMaterialOutput",
+      "ueClass": "MaterialExpressionSingleLayerWaterMaterialOutput"
+    },
+    {
+      "category": "Output",
+      "description": "Sets transmittance color and surface coverage for the Thin Translucent shading model.",
+      "displayName": "Thin Translucent Material Output",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Surface Coverage",
+          "type": "Float"
+        },
+        {
+          "name": "Transmittance Color",
+          "type": "Vector3"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [],
+      "properties": [],
+      "type": "ThinTranslucentMaterialOutput",
+      "ueClass": "MaterialExpressionThinTranslucentMaterialOutput"
+    },
+    {
+      "category": "Output",
+      "description": "Overrides the clear-coat normal separately from the base material normal.",
+      "displayName": "Clear Coat Normal Custom Output",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Clear Coat Normal",
+          "type": "Vector3"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [],
+      "properties": [],
+      "type": "ClearCoatNormalCustomOutput",
+      "ueClass": "MaterialExpressionClearCoatNormalCustomOutput"
+    },
+    {
       "category": "Constants",
       "description": "A single floating-point constant.",
       "displayName": "Constant",
@@ -2282,7 +2352,7 @@
       ],
       "properties": [
         {
-          "default": "assets/textures/T_HoloGrid.png",
+          "default": "assets/textures/T_Checker.png",
           "key": "texture",
           "label": "Texture"
         },
@@ -2346,7 +2416,7 @@
           "label": "Parameter Name"
         },
         {
-          "default": "assets/textures/T_HoloGrid.png",
+          "default": "assets/textures/T_Checker.png",
           "key": "texture",
           "label": "Texture"
         },
@@ -2494,7 +2564,7 @@
           "label": "Parameter Name"
         },
         {
-          "default": "assets/textures/T_HoloGrid.png",
+          "default": "assets/textures/T_Checker.png",
           "key": "texture",
           "label": "Texture"
         },

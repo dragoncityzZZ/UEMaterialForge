@@ -1,5 +1,26 @@
 # Changelog
 
+## 2.6.1 — 2026-11-18
+
+### 新增
+
+- 新增特殊材质输出节点：
+  - `SingleLayerWaterMaterialOutput`：Scattering Coefficients、Absorption Coefficients、PhaseG、Color Scale Behind Water。
+  - `ThinTranslucentMaterialOutput`：Surface Coverage、Transmittance Color。
+  - `ClearCoatNormalCustomOutput`：Clear Coat Normal。
+- 节点库支持按“单层水 / 水材质 / 薄半透明 / 清漆”等中文关键词搜索。
+
+### 修复
+
+- 撤销粒度改为按实际编辑操作切分：鼠标拖动期间合并为一步，鼠标释放或键盘操作结束后立即落盘，
+  不再把连续的添加、粘贴、删除等操作合并成过大的撤销步骤。
+- 框选大量节点复制后，粘贴以整组内容的中心生成在鼠标位置，不再从鼠标处向右下偏移。
+
+### 工程
+
+- 节点定义总数更新为 94（90 个节点库可见），`node_catalog.json` 和节点参考文档同步更新。
+- 版本更新为 2.6.1。
+
 ## 2.6.0 — 2026-11-17
 
 ### 修复

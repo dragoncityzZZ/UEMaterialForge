@@ -89,7 +89,7 @@ if ($LASTEXITCODE -ne 0) {
     throw "Inno Setup failed with exit code $LASTEXITCODE."
 }
 
-$Setup = Join-Path $Root "dist\installer\MaterialForge-2.6.0-Setup.exe"
+$Setup = Join-Path $Root "dist\installer\MaterialForge-2.6.1-Setup.exe"
 if (-not (Test-Path $Setup)) {
     throw "Installer output was not created: $Setup"
 }

@@ -137,7 +137,8 @@ void CompileAllExpressionShaders() {
     int compiled = 0;
     for (const NodeDefinition& definition : registry.All()) {
         if (definition.isMaterialOutput || definition.isFunctionOnly ||
-            definition.hiddenInLibrary || definition.isComment || definition.isFunctionCall) {
+            definition.hiddenInLibrary || definition.isComment || definition.isFunctionCall ||
+            definition.outputs.empty()) {
             continue;
         }
 

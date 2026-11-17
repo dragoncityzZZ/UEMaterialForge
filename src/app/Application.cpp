@@ -10628,7 +10628,7 @@ void Application::FlushUndoPending(bool force) {
     if (!force) {
         const bool busy = ImGui::IsMouseDown(ImGuiMouseButton_Left) ||
                           ImGui::IsAnyItemActive();
-        if (busy || m_TimeSeconds - document->undoLastChangeTime < 0.15) {
+        if (busy) {
             return;
         }
     }

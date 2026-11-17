@@ -1,10 +1,11 @@
 # UE5 材质节点参考
 
-本表由 `src/core/NodeRegistry.cpp` 中的实际定义整理，共 91 个节点定义，
-其中 87 个可在材质节点库中直接添加；另含 `MaterialOutput`、函数图专用的
-`FunctionInput` / `FunctionOutput`，以及按函数资产动态生成引脚的
-`MaterialFunctionCall`。`Comment` 是编辑器注释框，不参与着色器求值。
-`ueClass` 是 JSON 中的 `ueClass` 字段，也是 UE5 Python 导入时使用的类名。
+本表由 `src/core/NodeRegistry.cpp` 中的实际定义整理，共 94 个节点定义，
+其中 90 个可在材质节点库中直接添加；另含 `MaterialOutput`、单层水 / 薄半透明 /
+清漆法线等特殊输出、函数图专用的 `FunctionInput` / `FunctionOutput`，以及按
+函数资产动态生成引脚的 `MaterialFunctionCall`。`Comment` 是编辑器注释框，
+不参与着色器求值。`ueClass` 是 JSON 中的 `ueClass` 字段，也是 UE5 Python
+导入时使用的类名。
 
 ## Material Settings
 
@@ -58,6 +59,9 @@ Function...`，会生成 `functions/MF_Collapsed_N.mffunction`。选区边界上
 | Node type | UE class | Inputs | Outputs | 预览 / 导入说明 |
 |---|---|---|---|---|
 | `MaterialOutput` | Material（根节点，不属于 MaterialExpression） | Base Color, Metallic, Specular, Roughness, Emissive Color, Normal, Ambient Occlusion, Opacity, Opacity Mask, World Position Offset, Pixel Depth Offset, Refraction, Clear Coat, Clear Coat Roughness, Subsurface Color, Anisotropy | — | 导入时用 `connect_material_property` 连接到 `MP_BASE_COLOR`、`MP_OPACITY_MASK`、`MP_WORLD_POSITION_OFFSET`、`MP_CLEAR_COAT` 等材质属性。混合模式、着色模型、双面、遮罩阈值等由材质设置导出。 |
+| `SingleLayerWaterMaterialOutput` | `MaterialExpressionSingleLayerWaterMaterialOutput` | Scattering Coefficients, Absorption Coefficients, PhaseG, Color Scale Behind Water | — | Single Layer Water 着色模型的专用输出；GRAPH JSON 会保留引脚和连线，UE5 导入脚本按类名创建。 |
+| `ThinTranslucentMaterialOutput` | `MaterialExpressionThinTranslucentMaterialOutput` | Surface Coverage, Transmittance Color | — | Thin Translucent 着色模型的透射颜色和表面覆盖输出。 |
+| `ClearCoatNormalCustomOutput` | `MaterialExpressionClearCoatNormalCustomOutput` | Clear Coat Normal | — | 单独覆盖清漆层法线。 |
 
 ## Constants
 

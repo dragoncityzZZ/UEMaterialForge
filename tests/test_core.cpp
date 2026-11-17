@@ -203,7 +203,8 @@ void TestAllNodeTypesCompile() {
     GlslGenerator generator;
     for (const NodeDefinition& definition : registry.All()) {
         if (definition.isMaterialOutput || definition.isFunctionOnly ||
-            definition.hiddenInLibrary || definition.isComment) {
+            definition.hiddenInLibrary || definition.isComment ||
+            definition.outputs.empty()) {
             continue;
         }
         MaterialGraph graph;
@@ -1091,12 +1092,36 @@ void TestRenderApiParsing() {
               "ParseRenderApi did not fall back to OpenGL.");
 }
 
+void TestSpecialMaterialOutputs() {
+    const NodeRegistry& registry = NodeRegistry::Get();
+    const NodeDefinition* water = registry.Find("SingleLayerWaterMaterialOutput");
+    const NodeDefinition* thin = registry.Find("ThinTranslucentMaterialOutput");
+    const NodeDefinition* clearCoat = registry.Find("ClearCoatNormalCustomOutput");
+    CHECK_MSG(water != nullptr, "SingleLayerWaterMaterialOutput is missing.");
+    CHECK_MSG(thin != nullptr, "ThinTranslucentMaterialOutput is missing.");
+    CHECK_MSG(clearCoat != nullptr, "ClearCoatNormalCustomOutput is missing.");
+    if (water) {
+        CHECK(water->inputs.size() == 4u);
+        CHECK(water->ueClass == "MaterialExpressionSingleLayerWaterMaterialOutput");
+        CHECK(water->inputs[2].name == "PhaseG");
+    }
+    if (thin) {
+        CHECK(thin->inputs.size() == 2u);
+        CHECK(thin->ueClass == "MaterialExpressionThinTranslucentMaterialOutput");
+    }
+    if (clearCoat) {
+        CHECK(clearCoat->inputs.size() == 1u);
+        CHECK(clearCoat->inputs[0].name == "Clear Coat Normal");
+    }
+}
+
 int main() {
     TestRegistry();
     TestDefaultGraphAndCodegen();
     TestSerializationRoundTrip();
     TestConnectionRulesAndCycles();
     TestAllNodeTypesCompile();
+    TestSpecialMaterialOutputs();
     TestMissingOutputFailure();
     TestFunctionGraphCopyAndSerialization();
     TestComponentMaskTypes();

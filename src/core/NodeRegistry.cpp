@@ -224,6 +224,64 @@ NodeRegistry::NodeRegistry() {
         Register(std::move(def));
     }
 
+    {
+        NodeDefinition def;
+        def.type = "SingleLayerWaterMaterialOutput";
+        def.displayName = "Single Layer Water Material Output";
+        def.category = "Output";
+        def.description =
+            "Writes single-layer water volume properties: scattering, absorption, phase function and color behind the water surface.";
+        def.ueClass = "MaterialExpressionSingleLayerWaterMaterialOutput";
+        def.inputs = {
+            In("Scattering Coefficients", PinType::Vector3,
+               PropertyValue::Color3Value(0.20f, 0.55f, 0.75f),
+               "How much light scatters in the water volume (per cm)."),
+            In("Absorption Coefficients", PinType::Vector3,
+               PropertyValue::Color3Value(0.02f, 0.06f, 0.08f),
+               "How much light is absorbed by the water volume (per cm)."),
+            In("PhaseG", PinType::Float, PropertyValue::Float(0.0f),
+               "Schlick phase function g: positive scatters forward, negative scatters backward."),
+            In("Color Scale Behind Water", PinType::Vector3,
+               PropertyValue::Color3Value(1.0f, 1.0f, 1.0f),
+               "Color multiplier for the scene visible behind the water surface.")
+        };
+        Register(std::move(def));
+    }
+
+    {
+        NodeDefinition def;
+        def.type = "ThinTranslucentMaterialOutput";
+        def.displayName = "Thin Translucent Material Output";
+        def.category = "Output";
+        def.description =
+            "Sets transmittance color and surface coverage for the Thin Translucent shading model.";
+        def.ueClass = "MaterialExpressionThinTranslucentMaterialOutput";
+        def.inputs = {
+            In("Surface Coverage", PinType::Float, PropertyValue::Float(1.0f),
+               "Coverage of the thin translucent surface and the material on top."),
+            In("Transmittance Color", PinType::Vector3,
+               PropertyValue::Color3Value(1.0f, 1.0f, 1.0f),
+               "Transmittance color for a view perpendicular to the surface.")
+        };
+        Register(std::move(def));
+    }
+
+    {
+        NodeDefinition def;
+        def.type = "ClearCoatNormalCustomOutput";
+        def.displayName = "Clear Coat Normal Custom Output";
+        def.category = "Output";
+        def.description =
+            "Overrides the clear-coat normal separately from the base material normal.";
+        def.ueClass = "MaterialExpressionClearCoatNormalCustomOutput";
+        def.inputs = {
+            In("Clear Coat Normal", PinType::Vector3,
+               PropertyValue::Vec3Value(0.0f, 0.0f, 1.0f),
+               "Custom tangent-space normal used by the clear-coat layer.")
+        };
+        Register(std::move(def));
+    }
+
     // ------------------------------------------------------------------
     // Constants and parameters
     // ------------------------------------------------------------------

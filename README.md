@@ -14,7 +14,7 @@
 
 - 开源仓库：[dragoncityzZZ/dgndx](https://github.com/dragoncityzZZ/dgndx)
 - 下载安装包：[Releases](https://github.com/dragoncityzZZ/dgndx/releases/latest)
-- 当前版本：**2.5.0** · Windows x64 · 中文 / English
+- 当前版本：**2.6.0** · Windows x64 · 中文 / English
 - 主要技术：C++17、Dear ImGui、imgui-node-editor、OpenGL / Vulkan / DX12
 
 ## 截图
@@ -68,8 +68,11 @@
 - 自定义预览网格、HDRI 环境、灯光强度、曝光、地面高度。
 - **节点实时预览**：右键节点选择“实时预览”，或右键输出引脚选择“预览此输出”，
   材质球显示该节点及其上游子图的运算结果，修改上游节点后自动刷新。
+- 预览标题旁的 **实时 / Live** 开关：关闭后保持静态画面，只有旋转/缩放/重置
+  材质球或修改材质、预览设置时才重新渲染，降低持续 GPU 占用。
 
 ![节点实时预览](docs/images/node-preview.png)
+![实时预览开关](docs/images/live-preview-toggle.png)
 
 ### Material Instance
 
@@ -119,7 +122,7 @@
 安装包生成在：
 
 ```text
-dist/installer/MaterialForge-2.5.0-Setup.exe
+dist/installer/MaterialForge-2.6.0-Setup.exe
 ```
 
 运行安装程序后从开始菜单或桌面快捷方式启动。安装包包含程序、默认纹理、
@@ -144,7 +147,7 @@ cmake --build build
 > “Windows 已保护你的电脑 / 发布者未知”。这是 Windows 对下载文件的
 > SmartScreen 检查，不是安装包缺少卸载程序。要让 SmartScreen 显示发布者，
 > 需要用受信任的代码签名证书对 `MaterialForge.exe` 和
-> `MaterialForge-2.5.0-Setup.exe` 签名。构建脚本支持 PFX 或证书指纹：
+> `MaterialForge-2.6.0-Setup.exe` 签名。构建脚本支持 PFX 或证书指纹：
 >
 > ```powershell
 > $env:MATERIALFORGE_SIGN_PFX = "C:\path\to\codesign.pfx"
@@ -166,7 +169,7 @@ cmake --build build
 ### 便携版
 
 ```text
-dist/MaterialForge-2.5.0-win64-portable/
+dist/MaterialForge-2.6.0-win64-portable/
 ├─ MaterialForge.exe
 ├─ assets/          # 默认纹理、模型、manifest
 ├─ examples/        # 示例材质图和工程
@@ -184,11 +187,11 @@ Windows GUI 子系统，不依赖额外 VC++ Redistributable。
 
 ```powershell
 # 打开示例工程
-.\dist\MaterialForge-2.5.0-win64-portable\MaterialForge.exe `
+.\dist\MaterialForge-2.6.0-win64-portable\MaterialForge.exe `
   .\examples\projects\hologram_demo\HologramDemo.mfproject
 
 # 打开单个材质
-.\dist\MaterialForge-2.5.0-win64-portable\MaterialForge.exe `
+.\dist\MaterialForge-2.6.0-win64-portable\MaterialForge.exe `
   --open .\examples\graphs\hologram_circuit.json
 ```
 
@@ -232,7 +235,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\build-installer.ps1
 & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" .\installer\MaterialForge.iss
 ```
 
-输出：`dist/installer/MaterialForge-2.5.0-Setup.exe`。
+输出：`dist/installer/MaterialForge-2.6.0-Setup.exe`。
 
 ---
 
@@ -338,6 +341,7 @@ ctest --test-dir build --output-on-failure
 - [docs/MCP.md](docs/MCP.md) — MCP 服务与工具
 - [docs/PLUGINS.md](docs/PLUGINS.md) — 插件 ABI、目录格式和创建模板
 - [docs/DEFAULT_TEXTURES.md](docs/DEFAULT_TEXTURES.md) — 内置纹理清单
+- [CHANGELOG.md](CHANGELOG.md) — 版本更新日志
 
 ## License
 

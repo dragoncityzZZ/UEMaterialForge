@@ -112,6 +112,9 @@ bool AppSettingsStore::Load(AppSettings& settings, std::string* error) const {
         if (document.contains("previewDetached") && document["previewDetached"].is_boolean()) {
             settings.previewDetached = document["previewDetached"].get<bool>();
         }
+        if (document.contains("previewLive") && document["previewLive"].is_boolean()) {
+            settings.previewLive = document["previewLive"].get<bool>();
+        }
         if (document.contains("previewWindowX") && document["previewWindowX"].is_number()) {
             settings.previewWindowX = document["previewWindowX"].get<float>();
         }
@@ -189,6 +192,7 @@ bool AppSettingsStore::Save(const AppSettings& settings, std::string* error) con
     document["consoleVisible"] = settings.consoleVisible;
     document["consoleHeight"] = std::clamp(settings.consoleHeight, 110.0f, 520.0f);
     document["previewDetached"] = settings.previewDetached;
+    document["previewLive"] = settings.previewLive;
     document["previewWindowX"] = settings.previewWindowX;
     document["previewWindowY"] = settings.previewWindowY;
     document["previewWindowWidth"] = std::clamp(settings.previewWindowWidth, 320.0f, 1600.0f);

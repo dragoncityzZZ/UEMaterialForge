@@ -15,6 +15,7 @@ struct AppSettings {
     bool consoleVisible = false;
     float consoleHeight = 190.0f;
     bool previewDetached = false;
+    bool previewLive = true;
     float previewWindowX = 0.0f;
     float previewWindowY = 0.0f;
     float previewWindowWidth = 560.0f;

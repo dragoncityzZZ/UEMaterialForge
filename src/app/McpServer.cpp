@@ -421,7 +421,7 @@ nlohmann::json McpServer::HandleRpc(const nlohmann::json& request) {
             {"result",
              {{"protocolVersion", protocolVersion},
               {"capabilities", {{"tools", {{"listChanged", false}}}}},
-              {"serverInfo", {{"name", "MaterialForge"}, {"version", "2.5.0"}}}}},
+              {"serverInfo", {{"name", "MaterialForge"}, {"version", MF_VERSION_STRING}}}}},
         };
     }
     if (method == "notifications/initialized" || method.rfind("notifications/", 0) == 0) {

@@ -35,6 +35,7 @@ int main() {
     settings.consoleVisible = true;
     settings.consoleHeight = 240.0f;
     settings.previewDetached = true;
+    settings.previewLive = false;
     settings.previewWindowX = 120.0f;
     settings.previewWindowY = 80.0f;
     settings.previewWindowWidth = 640.0f;
@@ -66,6 +67,7 @@ int main() {
     Check(loaded.nodeLibraryCollapsed, "nodeLibraryCollapsed round-trip");
     Check(loaded.consoleVisible, "consoleVisible round-trip");
     Check(loaded.previewDetached, "previewDetached round-trip");
+    Check(!loaded.previewLive, "previewLive round-trip");
     Check(loaded.consoleHeight > 239.0f && loaded.consoleHeight < 241.0f,
           "consoleHeight round-trip");
     Check(loaded.previewWindowX > 119.0f && loaded.previewWindowX < 121.0f,

@@ -43,6 +43,9 @@ public:
     // Call after loading or replacing the whole graph. Rebuilds the editor
     // context so stale IDs/selection from the previous document are discarded.
     void OnGraphReplaced();
+    // Rebuild editor state after undo/redo while keeping the selected node in
+    // view instead of jumping back to the whole-graph framing.
+    void OnGraphReplacedPreservingView();
 
     void Draw(const ImVec2& size);
 
@@ -154,6 +157,7 @@ private:
     PinId m_TexturePickerPin = 0;
     NodeId m_NodePreviewRequestNode = 0;
     PinId m_NodePreviewRequestPin = 0;
+    NodeId m_PendingCenterNode = 0;
     bool m_TexturePinDropHandled = false;
     std::vector<Bookmark> m_Bookmarks;
     std::vector<NodeId> m_SelectedNodes;

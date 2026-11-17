@@ -568,6 +568,10 @@ private:
 
     bool m_PreviewDetached = false;
     bool m_PreviewRenderedThisFrame = false;
+    bool m_PreviewLive = true;
+    bool m_PreviewNeedsRender = true;
+    int m_PreviewLastWidth = 0;
+    int m_PreviewLastHeight = 0;
     PreviewBuffer m_PreviewBuffer = PreviewBuffer::Lit;
     bool m_PixelProbeEnabled = false;
     bool m_DetachedPreviewPlacementPending = false;

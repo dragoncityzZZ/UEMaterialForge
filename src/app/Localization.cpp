@@ -826,6 +826,8 @@ const std::unordered_map<std::string_view, const char*> kChinese = {
     {"Node preview shader compile failed. Open the GLSL tab for details.", "节点预览着色器编译失败，请打开 GLSL 标签查看详情。"},
     {"Previewing node: %s", "正在预览节点：%s"},
     {"Node preview closed.", "节点预览已关闭。"},
+    {"Live", "实时"},
+    {"Render the preview every frame. Turn off to keep a static image and refresh it only after orbiting the material ball.", "每帧渲染实时预览；关闭后保持静态画面，旋转材质球或修改材质时才刷新。"},
     {"Delete Selected Files", "删除所选文件"},
     {"Delete Selected Files...", "删除所选文件..."},
     {"Delete %d selected file(s)?", "删除所选的 %d 个文件？"},

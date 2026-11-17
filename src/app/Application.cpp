@@ -1171,6 +1171,7 @@ void Application::UpdateMaterialIfNeeded() {
     if (!m_ForceShaderRefresh && m_Graph.ContentRevision() == m_LastContentRevision) {
         return;
     }
+    m_PreviewNeedsRender = true;
     m_LastContentRevision = m_Graph.ContentRevision();
     m_ForceShaderRefresh = false;
 
@@ -1341,6 +1342,8 @@ void Application::LoadUiSettings() {
     m_ConsoleVisible = m_Settings.consoleVisible;
     m_ConsoleHeight = std::clamp(m_Settings.consoleHeight, 110.0f, 520.0f);
     m_PreviewDetached = m_Settings.previewDetached;
+    m_PreviewLive = m_Settings.previewLive;
+    m_PreviewNeedsRender = true;
     m_DetachedPreviewX = m_Settings.previewWindowX;
     m_DetachedPreviewY = m_Settings.previewWindowY;
     m_DetachedPreviewWidth = std::clamp(m_Settings.previewWindowWidth, 320.0f, 1600.0f);
@@ -1360,6 +1363,7 @@ void Application::SaveUiSettings() {
     m_Settings.consoleVisible = m_ConsoleVisible;
     m_Settings.consoleHeight = m_ConsoleHeight;
     m_Settings.previewDetached = m_PreviewDetached;
+    m_Settings.previewLive = m_PreviewLive;
     m_Settings.previewWindowX = m_DetachedPreviewX;
     m_Settings.previewWindowY = m_DetachedPreviewY;
     m_Settings.previewWindowWidth = m_DetachedPreviewWidth;
@@ -1656,6 +1660,7 @@ void Application::DrawMenuBar() {
         }
         if (ImGui::MenuItem(Tr("Reset Preview Camera"), "R")) {
             m_PreviewRenderer.Camera().Reset();
+            m_PreviewNeedsRender = true;
         }
         ImGui::EndMenu();
     }
@@ -4079,6 +4084,7 @@ void Application::RefreshNodePreview() {
         m_NodePreviewRevision = m_Graph.ContentRevision();
         m_LastContentRevision = m_NodePreviewRevision;
         m_ForceShaderRefresh = false;
+        m_PreviewNeedsRender = true;
         return;
     }
 
@@ -4104,6 +4110,7 @@ void Application::RefreshNodePreview() {
     m_NodePreviewRevision = m_Graph.ContentRevision();
     m_LastContentRevision = m_NodePreviewRevision;
     m_ForceShaderRefresh = false;
+    m_PreviewNeedsRender = true;
     if (m_ShaderCompiled) {
         SetStatus(FormatLocalized("Previewing node: %s", NodeDisplayName(*node)));
     } else {
@@ -4288,10 +4295,17 @@ void Application::DrawPreviewContents(float width, float height, bool floating) 
     const int previewWidth = std::max(2, static_cast<int>(imageSize.x * framebufferScale));
     const int previewHeight = std::max(2, static_cast<int>(imageSize.y * framebufferScale));
     if (!m_PreviewRenderedThisFrame) {
-        const MaterialGraph& renderGraph = m_NodePreviewActive ? m_NodePreviewGraph : m_Graph;
-        m_PreviewRenderer.Render(renderGraph, static_cast<float>(m_TimeSeconds), previewWidth,
-                                 previewHeight);
-        m_PreviewRenderedThisFrame = true;
+        const bool sizeChanged = previewWidth != m_PreviewLastWidth ||
+                                 previewHeight != m_PreviewLastHeight;
+        if (m_PreviewLive || m_PreviewNeedsRender || sizeChanged) {
+            const MaterialGraph& renderGraph = m_NodePreviewActive ? m_NodePreviewGraph : m_Graph;
+            m_PreviewRenderer.Render(renderGraph, static_cast<float>(m_TimeSeconds), previewWidth,
+                                     previewHeight);
+            m_PreviewRenderedThisFrame = true;
+            m_PreviewNeedsRender = false;
+            m_PreviewLastWidth = previewWidth;
+            m_PreviewLastHeight = previewHeight;
+        }
     }
 
     ImGui::InvisibleButton("##preview_surface", imageSize);
@@ -4301,15 +4315,18 @@ void Application::DrawPreviewContents(float width, float height, bool floating) 
         const float wheel = ImGui::GetIO().MouseWheel;
         if (wheel != 0.0f) {
             m_PreviewRenderer.Zoom(wheel);
+            m_PreviewNeedsRender = true;
         }
         if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
             m_PreviewRenderer.Camera().Reset();
+            m_PreviewNeedsRender = true;
         }
         ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
     }
     if (active && ImGui::IsMouseDragging(ImGuiMouseButton_Left, 1.0f)) {
         const ImVec2 delta = ImGui::GetIO().MouseDelta;
         m_PreviewRenderer.Orbit(delta.x, delta.y);
+        m_PreviewNeedsRender = true;
     }
 
     const ImVec2 imageMin = ImGui::GetItemRectMin();
@@ -4466,16 +4483,30 @@ void Application::DrawPreviewPanel(float width, float height) {
     ImGui::Dummy(ImVec2(8.0f, 0.0f));
 
     if (!functionDoc) {
+        ImGui::SameLine(0.0f, 6.0f);
+        if (ImGui::Checkbox(Tr("Live"), &m_PreviewLive)) {
+            m_Settings.previewLive = m_PreviewLive;
+            m_PreviewNeedsRender = true;
+            SaveUiSettings();
+        }
+        if (ImGui::IsItemHovered()) {
+            ImGui::SetTooltip("%s", Tr("Render the preview every frame. Turn off to keep a static image and refresh it only after orbiting the material ball."));
+        }
+    }
+
+    if (!functionDoc) {
         ImGui::SameLine();
         ImGui::SetCursorPosX(ImGui::GetWindowContentRegionMax().x - controlsWidth);
         if (Ui::ToggleButton(Tr("Sphere"), m_PreviewRenderer.GetMesh() == PreviewMesh::Sphere,
                              ImVec2(toggleWidth, Ui::S(30.0f)))) {
             m_PreviewRenderer.SetMesh(PreviewMesh::Sphere);
+            m_PreviewNeedsRender = true;
         }
         ImGui::SameLine();
         if (Ui::ToggleButton(Tr("Plane"), m_PreviewRenderer.GetMesh() == PreviewMesh::Plane,
                              ImVec2(toggleWidth, Ui::S(30.0f)))) {
             m_PreviewRenderer.SetMesh(PreviewMesh::Plane);
+            m_PreviewNeedsRender = true;
         }
         if (showDetach) {
             ImGui::SameLine();
@@ -4504,6 +4535,7 @@ void Application::DrawPreviewPanel(float width, float height) {
                         m_PreviewBuffer = buffer;
                         m_LastContentRevision = 0;
                         m_ForceShaderRefresh = true;
+                        m_PreviewNeedsRender = true;
                     }
                 }
                 if (selected) ImGui::SetItemDefaultFocus();
@@ -4676,6 +4708,7 @@ void Application::DrawDetachedPreviewWindow() {
                                  ImVec2(Ui::S(66.0f), Ui::S(28.0f)))) {
                 m_Settings.previewMeshMode = "Sphere";
                 m_PreviewRenderer.SetMesh(PreviewMesh::Sphere);
+                m_PreviewNeedsRender = true;
                 SaveUiSettings();
             }
             ImGui::SameLine();
@@ -4683,6 +4716,7 @@ void Application::DrawDetachedPreviewWindow() {
                                  ImVec2(Ui::S(66.0f), Ui::S(28.0f)))) {
                 m_Settings.previewMeshMode = "Plane";
                 m_PreviewRenderer.SetMesh(PreviewMesh::Plane);
+                m_PreviewNeedsRender = true;
                 SaveUiSettings();
             }
             ImGui::SameLine();
@@ -4948,6 +4982,7 @@ void Application::ApplyPreviewSceneSettings() {
     }
     m_LastContentRevision = 0;
     m_ForceShaderRefresh = true;
+    m_PreviewNeedsRender = true;
 }
 
 void Application::RequestUeBatchExport() {
@@ -5845,9 +5880,26 @@ void Application::DrawNodeDetails() {
             const Link* link = m_Graph.FindInputLink(pin.id);
             if (pin.direction == PinDirection::Input && pin.type == PinType::Texture) {
                 const Node* source = link ? m_Graph.FindSourceNode(pin.id) : nullptr;
-                const std::string label = source ? NodeDisplayName(*source)
-                                                 : Tr("Select Texture...");
-                if (ImGui::Button(label.c_str(), ImVec2(-1.0f, 0.0f))) {
+                std::string texturePath;
+                if (source) {
+                    const auto textureIt = source->properties.find("texture");
+                    if (textureIt != source->properties.end() &&
+                        IsStringProperty(textureIt->second.kind)) {
+                        texturePath = textureIt->second.text;
+                    }
+                }
+                if (texturePath.empty()) {
+                    const auto ownTexture = node->properties.find("texture");
+                    if (ownTexture != node->properties.end() &&
+                        IsStringProperty(ownTexture->second.kind)) {
+                        texturePath = ownTexture->second.text;
+                    }
+                }
+                const std::string textureName =
+                    texturePath.empty()
+                        ? (source ? std::string("TextureObject") : Tr("Select Texture..."))
+                        : fs::path(texturePath).filename().u8string();
+                if (ImGui::Button(textureName.c_str(), ImVec2(-1.0f, 0.0f))) {
                     OpenTexturePicker(node->id, pin.id);
                 }
                 if (ImGui::IsItemHovered()) {
@@ -6259,7 +6311,7 @@ void Application::ExecuteConsoleCommand(const std::string& commandLine) {
                    "buffer <name>, probe <on|off|toggle>, comment, group, selectall, "
                    "align <mode>, distribute <h|v>, bookmark, "
                    "settings <blend|shading|clip|twosided> <value>, collapse, delete <path>, instance, param <name> <value>, previewscene, uebridge, "
-                   "packages, addallpackages, pluginmanager, texturepicker, viewtexture, previewnode, stopnodepreview, convertconstant, open <graph.json>, save, saveas, quit. Plugin commands appear here after a plugin is loaded.");
+                   "packages, addallpackages, pluginmanager, texturepicker, viewtexture, previewnode, stopnodepreview, convertconstant, close, open <graph.json>, save, saveas, quit. Plugin commands appear here after a plugin is loaded.");
         return;
     }
     if (command == "clear" || command == "cls") {
@@ -6360,6 +6412,7 @@ void Application::ExecuteConsoleCommand(const std::string& commandLine) {
         m_PreviewBuffer = buffer;
         m_LastContentRevision = 0;
         m_ForceShaderRefresh = true;
+        m_PreviewNeedsRender = true;
         LogMessage(LogLevel::Info,
                    std::string("Preview buffer: ") + PreviewBufferName(buffer));
         return;
@@ -6677,6 +6730,10 @@ void Application::ExecuteConsoleCommand(const std::string& commandLine) {
     }
     if (command == "quit" || command == "exit") {
         m_WantsExit = true;
+        return;
+    }
+    if (command == "close") {
+        if (m_ActiveDocument >= 0) RequestCloseDocument(m_ActiveDocument);
         return;
     }
     if (command == "version") {
@@ -8435,7 +8492,7 @@ void Application::DrawAboutPopup() {
 #if defined(MF_VERSION_STRING)
         ImGui::TextUnformatted("MaterialForge " MF_VERSION_STRING);
 #else
-        ImGui::TextUnformatted("MaterialForge 2.5.0");
+        ImGui::TextUnformatted("MaterialForge " MF_VERSION_STRING);
 #endif
         PopBoldFont();
         ImGui::TextDisabled("%s", Tr("A lightweight UE5-inspired material node editor"));
@@ -10648,7 +10705,7 @@ void Application::Undo() {
     document->undoLayoutRevision = m_Graph.LayoutRevision();
     document->undoPending = false;
     if (m_GraphView) {
-        m_GraphView->OnGraphReplaced();
+        m_GraphView->OnGraphReplacedPreservingView();
     }
     m_LastContentRevision = 0;
     m_ForceShaderRefresh = true;
@@ -10676,7 +10733,7 @@ void Application::Redo() {
     document->undoLayoutRevision = m_Graph.LayoutRevision();
     document->undoPending = false;
     if (m_GraphView) {
-        m_GraphView->OnGraphReplaced();
+        m_GraphView->OnGraphReplacedPreservingView();
     }
     m_LastContentRevision = 0;
     m_ForceShaderRefresh = true;
@@ -10997,10 +11054,10 @@ void Application::CloseDocumentNow(int index) {
     m_OpenCloseDocumentModal = false;
 
     if (m_Documents.empty()) {
-        MaterialGraph fresh;
-        std::string error;
-        BuildStarterMaterialGraph(fresh, "M_NewMaterial", &error);
-        m_Graph = std::move(fresh);
+        // Closing the last document leaves an intentionally empty workspace.
+        // Do not synthesize a starter material or register an untitled tab.
+        m_Graph.Clear();
+        m_Graph.Settings().name.clear();
         m_Instance = MaterialInstance{};
         m_InstanceParameters.clear();
         m_DocumentPath.clear();
@@ -11012,7 +11069,6 @@ void Application::CloseDocumentNow(int index) {
         }
         m_LastContentRevision = 0;
         m_ForceShaderRefresh = true;
-        RegisterLiveDocument(DocumentKind::Material, {});
         UpdateWindowTitle();
         return;
     }
@@ -11266,6 +11322,7 @@ void Application::HandleShortcuts() {
     }
     if (ImGui::IsKeyPressed(ImGuiKey_R, false)) {
         m_PreviewRenderer.Camera().Reset();
+        m_PreviewNeedsRender = true;
     }
 }
 

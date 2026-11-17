@@ -93,6 +93,10 @@ ImVec4 LinkColorFor(const Pin& outputPin, TypeResolver& resolver) {
 }
 
 void ShowPinTooltip(const Pin& pin, PinType effectiveType, bool connected) {
+    const ImVec2 anchor = ImGui::GetItemRectMin();
+    ImGui::SetNextWindowPos(ImVec2(anchor.x + Ui::S(12.0f),
+                                   ImGui::GetItemRectMax().y + Ui::S(4.0f)),
+                            ImGuiCond_Always);
     ImGui::BeginTooltip();
     ImGui::TextUnformatted(pin.name.c_str());
     ImGui::TextColored(Ui::PinTypeColor(effectiveType, true), "%s  ·  %s",
@@ -219,10 +223,26 @@ void NodeGraphView::OnGraphReplaced() {
     m_PendingSelectNode = m_SelectedNodeId;
     m_PendingFrameAll = true;
     m_PendingFrameSelection = false;
+    m_PendingCenterNode = 0;
     m_ContextNode = 0;
     m_ContextLink = 0;
     m_AddSearch[0] = '\0';
     m_ViewCenterCanvas = ImVec2(0.0f, 0.0f);
+}
+
+void NodeGraphView::OnGraphReplacedPreservingView() {
+    const std::vector<NodeId> selected = m_SelectedNodes;
+    const NodeId primary = m_SelectedNodeId;
+    OnGraphReplaced();
+    if (!selected.empty()) {
+        m_PendingSelectNode = 0;
+        m_PendingSelectNodes = selected;
+    } else if (primary != 0 && m_Graph.FindNode(primary)) {
+        m_PendingSelectNode = primary;
+    }
+    m_PendingFrameAll = false;
+    m_PendingFrameSelection = false;
+    m_PendingCenterNode = primary;
 }
 
 Node* NodeGraphView::AddNodeAtViewCenter(const std::string& type, std::string* error) {
@@ -1333,6 +1353,12 @@ void NodeGraphView::Draw(const ImVec2& size) {
         ed::NavigateToSelection(true, 0.30f);
         m_PendingFrameSelection = false;
     }
+    if (m_PendingCenterNode != 0) {
+        if (m_Graph.FindNode(m_PendingCenterNode)) {
+            ed::CenterNodeOnScreen(ToEditorNode(m_PendingCenterNode));
+        }
+        m_PendingCenterNode = 0;
+    }
 
     ed::SetCurrentEditor(nullptr);
 }
@@ -1921,6 +1947,9 @@ void NodeGraphView::DrawNode(Node& node, TypeResolver& resolver) {
         }
     }
     if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal)) {
+        ImGui::SetNextWindowPos(ImVec2(headerStart.x + Ui::S(8.0f),
+                                       headerEnd.y + Ui::S(4.0f)),
+                                ImGuiCond_Always);
         ImGui::BeginTooltip();
         ImGui::TextColored(categoryColor, "%s", definition->ueClass.c_str());
         ImGui::TextWrapped("%s", Tr(definition->description.c_str()));
@@ -1940,7 +1969,31 @@ void NodeGraphView::DrawNode(Node& node, TypeResolver& resolver) {
             ed::PinPivotSize(ImVec2(0.0f, 0.0f));
             Ui::DrawPinDot(effective, connected);
             ImGui::SameLine(0.0f, 6.0f);
-            ImGui::TextUnformatted(pin.name.c_str());
+            std::string pinLabel = pin.name;
+            if (pin.type == PinType::Texture) {
+                const Link* inputLink = m_Graph.FindInputLink(pin.id);
+                const Node* textureSource =
+                    inputLink ? m_Graph.FindSourceNode(pin.id) : nullptr;
+                std::string texturePath;
+                if (textureSource) {
+                    const auto textureIt = textureSource->properties.find("texture");
+                    if (textureIt != textureSource->properties.end() &&
+                        IsStringProperty(textureIt->second.kind)) {
+                        texturePath = textureIt->second.text;
+                    }
+                }
+                if (texturePath.empty()) {
+                    const auto ownTexture = node.properties.find("texture");
+                    if (ownTexture != node.properties.end() &&
+                        IsStringProperty(ownTexture->second.kind)) {
+                        texturePath = ownTexture->second.text;
+                    }
+                }
+                pinLabel = texturePath.empty()
+                               ? std::string("TextureObject")
+                               : std::filesystem::path(texturePath).filename().u8string();
+            }
+            ImGui::TextUnformatted(pinLabel.c_str());
             if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal)) {
                 ShowPinTooltip(pin, effective, connected);
             }
@@ -1986,6 +2039,10 @@ void NodeGraphView::DrawNode(Node& node, TypeResolver& resolver) {
                 }
                 ImGui::PopID();
                 if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal)) {
+                    ImGui::SetNextWindowPos(
+                        ImVec2(ImGui::GetItemRectMin().x,
+                               ImGui::GetItemRectMax().y + Ui::S(4.0f)),
+                        ImGuiCond_Always);
                     ImGui::SetTooltip("%s\n%s", Tr("Input default"),
                                       Tr("Used when this input is not connected."));
                 }

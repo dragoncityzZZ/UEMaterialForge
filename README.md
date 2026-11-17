@@ -14,7 +14,7 @@
 
 - 开源仓库：[dragoncityzZZ/dgndx](https://github.com/dragoncityzZZ/dgndx)
 - 下载安装包：[Releases](https://github.com/dragoncityzZZ/dgndx/releases/latest)
-- 当前版本：**2.6.3** · Windows x64 · 中文 / English
+- 当前版本：**2.6.4** · Windows x64 · 中文 / English
 - 主要技术：C++17、Dear ImGui、imgui-node-editor、OpenGL / Vulkan / DX12
 
 ## 截图
@@ -127,12 +127,22 @@
 安装包生成在：
 
 ```text
-dist/installer/MaterialForge-2.6.3-Setup.exe
+dist/installer/MaterialForge-2.6.4-Setup.exe
 ```
 
 运行安装程序后从开始菜单或桌面快捷方式启动。安装包包含程序、默认纹理、
 示例工程、文档、UE5 工具和卸载程序。安装后 `{app}\unins000.exe` 和开始菜单
 中的 **Uninstall MaterialForge** 都可以卸载，Windows“应用和功能”里也会登记。
+
+渲染运行时随安装包一起分发，不需要安装 Vulkan SDK、DirectX SDK 或
+Visual C++ Redistributable：
+
+- **OpenGL**：使用系统 GPU 驱动提供的 `opengl32.dll`，Windows 自带的软件
+  OpenGL 1.1 不满足要求；安装显卡驱动即可。
+- **Vulkan**：安装包自带 `vulkan-1.dll`（Khronos loader）和
+  `tools/glslang/glslang.exe`；仍然需要支持 Vulkan 的显卡驱动/ICD 才能创建设备。
+- **DirectX 12**：使用 Windows 10/11 的 `d3d12.dll` / `dxgi.dll`，安装包自带
+  `d3dcompiler_47.dll` 用于运行时编译 HLSL。
 
 也可以直接从 GitHub Releases 下载：
 
@@ -152,7 +162,7 @@ cmake --build build
 > “Windows 已保护你的电脑 / 发布者未知”。这是 Windows 对下载文件的
 > SmartScreen 检查，不是安装包缺少卸载程序。要让 SmartScreen 显示发布者，
 > 需要用受信任的代码签名证书对 `MaterialForge.exe` 和
-> `MaterialForge-2.6.3-Setup.exe` 签名。构建脚本支持 PFX 或证书指纹：
+> `MaterialForge-2.6.4-Setup.exe` 签名。构建脚本支持 PFX 或证书指纹：
 >
 > ```powershell
 > $env:MATERIALFORGE_SIGN_PFX = "C:\path\to\codesign.pfx"
@@ -174,8 +184,10 @@ cmake --build build
 ### 便携版
 
 ```text
-dist/MaterialForge-2.6.3-win64-portable/
+dist/MaterialForge-2.6.4-win64-portable/
 ├─ MaterialForge.exe
+├─ vulkan-1.dll      # Khronos Vulkan loader
+├─ d3dcompiler_47.dll
 ├─ assets/          # 默认纹理、模型、manifest
 ├─ examples/        # 示例材质图和工程
 ├─ docs/            # 使用与格式文档
@@ -192,11 +204,11 @@ Windows GUI 子系统，不依赖额外 VC++ Redistributable。
 
 ```powershell
 # 打开示例工程
-.\dist\MaterialForge-2.6.3-win64-portable\MaterialForge.exe `
+.\dist\MaterialForge-2.6.4-win64-portable\MaterialForge.exe `
   .\examples\projects\hologram_demo\HologramDemo.mfproject
 
 # 打开单个材质
-.\dist\MaterialForge-2.6.3-win64-portable\MaterialForge.exe `
+.\dist\MaterialForge-2.6.4-win64-portable\MaterialForge.exe `
   --open .\examples\graphs\hologram_circuit.json
 ```
 
@@ -240,7 +252,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\build-installer.ps1
 & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" .\installer\MaterialForge.iss
 ```
 
-输出：`dist/installer/MaterialForge-2.6.3-Setup.exe`。
+输出：`dist/installer/MaterialForge-2.6.4-Setup.exe`。
 
 ---
 
@@ -330,6 +342,8 @@ ctest --test-dir build --output-on-failure
 - 当前主要在 Windows 11 + MSVC + OpenGL 4.6 上验证；Linux / macOS 保留分支但
   未作为发布目标。
 - Vulkan / DX12 预览为可选后端，需要对应驱动；不满足时回退 OpenGL。
+- OpenGL 依赖显卡驱动；Vulkan loader / glslang / D3DCompiler 已随包分发，但
+  Vulkan 和 DX12 仍需要支持的 GPU 与驱动。
 - 纹理参数在 Material Instance 中仍是只读元数据；标量 / 向量参数支持覆盖。
 - 材质实例的父材质修改后需要在实例页重新打开或刷新参数列表。
 - MCP 默认关闭，只监听本机回环地址。

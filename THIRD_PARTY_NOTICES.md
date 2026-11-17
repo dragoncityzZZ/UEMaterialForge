@@ -47,9 +47,17 @@ file for the complete license text.
 
 ## DirectX 12 / D3DCompiler
 
-DirectX 12 and D3DCompiler are Windows system components and are not bundled.
-The DirectX 12 preview backend links against `d3d12`, `dxgi` and `d3dcompiler`
-from the Windows SDK.
+DirectX 12 and DXGI are Windows system components. `d3dcompiler_47.dll` (x64)
+from the Windows SDK DirectX redistributable is included next to the executable
+so the DirectX 12 preview backend can compile generated HLSL at runtime without
+a separate DirectX SDK installation.
+
+## Vulkan loader
+
+- `vulkan-1.dll` (Khronos Vulkan loader 1.4.309.0) is distributed next to
+  `MaterialForge.exe`.
+- License: Apache-2.0 OR MIT; see `third_party/vulkan/LICENSE.md`.
+- A Vulkan-capable GPU driver / ICD is still required to create a device.
 
 ## nlohmann/json
 

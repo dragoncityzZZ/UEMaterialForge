@@ -62,6 +62,14 @@ if (Test-Path $Payload) {
 New-Item -ItemType Directory -Path $Payload -Force | Out-Null
 
 Copy-Item $Exe (Join-Path $Payload "MaterialForge.exe") -Force
+foreach ($RuntimeDll in @("vulkan-1.dll", "d3dcompiler_47.dll")) {
+    $RuntimePath = Join-Path $ReleaseBin $RuntimeDll
+    if (Test-Path $RuntimePath) {
+        Copy-Item $RuntimePath (Join-Path $Payload $RuntimeDll) -Force
+    } else {
+        throw "Required runtime file is missing from the Release build: $RuntimePath"
+    }
+}
 foreach ($Folder in @("assets", "examples", "tools")) {
     $Source = Join-Path $ReleaseBin $Folder
     if (Test-Path $Source) {
@@ -89,7 +97,7 @@ if ($LASTEXITCODE -ne 0) {
     throw "Inno Setup failed with exit code $LASTEXITCODE."
 }
 
-$Setup = Join-Path $Root "dist\installer\MaterialForge-2.6.3-Setup.exe"
+$Setup = Join-Path $Root "dist\installer\MaterialForge-2.6.4-Setup.exe"
 if (-not (Test-Path $Setup)) {
     throw "Installer output was not created: $Setup"
 }

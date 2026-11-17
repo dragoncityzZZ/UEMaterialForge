@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.6.4 — 2026-11-18
+
+### 安装包运行时
+
+- 安装包自带 `vulkan-1.dll`（Khronos Vulkan loader），用户不需要安装 Vulkan SDK。
+- 安装包自带 `d3dcompiler_47.dll`（Windows SDK DirectX 可再分发文件），
+  DirectX 12 预览不需要单独安装 DirectX SDK。
+- `tools/glslang/glslang.exe` 及其 VC++ 运行库继续随包分发。
+- OpenGL 使用系统 GPU 驱动；DirectX 12 使用 Windows 10/11 的 D3D12/DXGI；
+  需要对应显卡驱动，但不需要额外 SDK 或 VC++ Redistributable。
+
 ## 2.6.3 — 2026-11-18
 
 ### 新增

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
 
-project(MaterialForge VERSION 2.6.3 LANGUAGES C CXX)
+project(MaterialForge VERSION 2.6.4 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -176,6 +176,12 @@ add_custom_command(TARGET MaterialForge POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
             "${CMAKE_SOURCE_DIR}/third_party/glslang/bin"
             "$<TARGET_FILE_DIR:MaterialForge>/tools/glslang"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_SOURCE_DIR}/third_party/vulkan/bin/vulkan-1.dll"
+            "$<TARGET_FILE_DIR:MaterialForge>/vulkan-1.dll"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${CMAKE_SOURCE_DIR}/third_party/d3dcompiler/bin/d3dcompiler_47.dll"
+            "$<TARGET_FILE_DIR:MaterialForge>/d3dcompiler_47.dll"
     COMMENT "Copying MaterialForge runtime content"
 )
 

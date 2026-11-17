@@ -1,0 +1,618 @@
+{
+  "engine": "Unreal Engine 5",
+  "generator": "MaterialForge 1.0",
+  "links": [
+    {
+      "fromNode": 2,
+      "fromPin": 1008,
+      "fromPinName": "Time",
+      "id": 100000,
+      "toNode": 5,
+      "toPin": 1012,
+      "toPinName": "Time"
+    },
+    {
+      "fromNode": 3,
+      "fromPin": 1009,
+      "fromPinName": "UV",
+      "id": 100001,
+      "toNode": 5,
+      "toPin": 1011,
+      "toPinName": "Coordinate"
+    },
+    {
+      "fromNode": 5,
+      "fromPin": 1013,
+      "fromPinName": "UV",
+      "id": 100002,
+      "toNode": 6,
+      "toPin": 1014,
+      "toPinName": "UVs"
+    },
+    {
+      "fromNode": 4,
+      "fromPin": 1010,
+      "fromPinName": "Texture",
+      "id": 100003,
+      "toNode": 6,
+      "toPin": 1015,
+      "toPinName": "Texture"
+    },
+    {
+      "fromNode": 6,
+      "fromPin": 1017,
+      "fromPinName": "RGB",
+      "id": 100004,
+      "toNode": 8,
+      "toPin": 1023,
+      "toPinName": "A"
+    },
+    {
+      "fromNode": 7,
+      "fromPin": 1022,
+      "fromPinName": "Value",
+      "id": 100005,
+      "toNode": 8,
+      "toPin": 1024,
+      "toPinName": "B"
+    },
+    {
+      "fromNode": 8,
+      "fromPin": 1025,
+      "fromPinName": "Result",
+      "id": 100006,
+      "toNode": 1,
+      "toPin": 1000,
+      "toPinName": "Base Color"
+    },
+    {
+      "fromNode": 9,
+      "fromPin": 1026,
+      "fromPinName": "Value",
+      "id": 100007,
+      "toNode": 1,
+      "toPin": 1003,
+      "toPinName": "Roughness"
+    },
+    {
+      "fromNode": 10,
+      "fromPin": 1027,
+      "fromPinName": "Value",
+      "id": 100008,
+      "toNode": 1,
+      "toPin": 1001,
+      "toPinName": "Metallic"
+    },
+    {
+      "fromNode": 11,
+      "fromPin": 1028,
+      "fromPinName": "Result",
+      "id": 100009,
+      "toNode": 13,
+      "toPin": 1030,
+      "toPinName": "A"
+    },
+    {
+      "fromNode": 12,
+      "fromPin": 1029,
+      "fromPinName": "Value",
+      "id": 100010,
+      "toNode": 13,
+      "toPin": 1031,
+      "toPinName": "B"
+    },
+    {
+      "fromNode": 6,
+      "fromPin": 1018,
+      "fromPinName": "R",
+      "id": 100011,
+      "toNode": 14,
+      "toPin": 1033,
+      "toPinName": "A"
+    },
+    {
+      "fromNode": 13,
+      "fromPin": 1032,
+      "fromPinName": "Result",
+      "id": 100012,
+      "toNode": 14,
+      "toPin": 1034,
+      "toPinName": "B"
+    },
+    {
+      "fromNode": 14,
+      "fromPin": 1035,
+      "fromPinName": "Result",
+      "id": 100013,
+      "toNode": 1,
+      "toPin": 1004,
+      "toPinName": "Emissive Color"
+    }
+  ],
+  "material": {
+    "blendMode": "Opaque",
+    "domain": "Surface",
+    "name": "M_HoloCircuit",
+    "shadingModel": "DefaultLit",
+    "twoSided": false
+  },
+  "nodes": [
+    {
+      "category": "Output",
+      "id": 1,
+      "pins": [
+        {
+          "default": [
+            0.18000000715255737,
+            0.18000000715255737,
+            0.18000000715255737
+          ],
+          "direction": "input",
+          "id": 1000,
+          "name": "Base Color",
+          "type": "Vector3"
+        },
+        {
+          "default": 0.0,
+          "direction": "input",
+          "id": 1001,
+          "name": "Metallic",
+          "type": "Float"
+        },
+        {
+          "default": 0.5,
+          "direction": "input",
+          "id": 1002,
+          "name": "Specular",
+          "type": "Float"
+        },
+        {
+          "default": 0.5,
+          "direction": "input",
+          "id": 1003,
+          "name": "Roughness",
+          "type": "Float"
+        },
+        {
+          "default": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "direction": "input",
+          "id": 1004,
+          "name": "Emissive Color",
+          "type": "Vector3"
+        },
+        {
+          "default": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "direction": "input",
+          "id": 1005,
+          "name": "Normal",
+          "type": "Vector3"
+        },
+        {
+          "default": 1.0,
+          "direction": "input",
+          "id": 1006,
+          "name": "Ambient Occlusion",
+          "type": "Float"
+        },
+        {
+          "default": 1.0,
+          "direction": "input",
+          "id": 1007,
+          "name": "Opacity",
+          "type": "Float"
+        }
+      ],
+      "position": {
+        "x": 330.0,
+        "y": -260.0
+      },
+      "properties": {},
+      "type": "MaterialOutput",
+      "ueClass": "Material"
+    },
+    {
+      "category": "Coordinates",
+      "id": 2,
+      "pins": [
+        {
+          "direction": "output",
+          "id": 1008,
+          "name": "Time",
+          "type": "Float"
+        }
+      ],
+      "position": {
+        "x": -450.0,
+        "y": -340.0
+      },
+      "properties": {},
+      "type": "Time",
+      "ueClass": "MaterialExpressionTime"
+    },
+    {
+      "category": "Coordinates",
+      "id": 3,
+      "pins": [
+        {
+          "direction": "output",
+          "id": 1009,
+          "name": "UV",
+          "type": "Vector2"
+        }
+      ],
+      "position": {
+        "x": -450.0,
+        "y": -180.0
+      },
+      "properties": {
+        "uTiling": 2.0,
+        "vTiling": 2.0
+      },
+      "type": "TextureCoordinate",
+      "ueClass": "MaterialExpressionTextureCoordinate"
+    },
+    {
+      "category": "Textures",
+      "id": 4,
+      "pins": [
+        {
+          "direction": "output",
+          "id": 1010,
+          "name": "Texture",
+          "type": "Texture"
+        }
+      ],
+      "position": {
+        "x": -450.0,
+        "y": 20.0
+      },
+      "properties": {
+        "texture": "assets/textures/T_HoloGrid.png"
+      },
+      "type": "TextureObject",
+      "ueClass": "MaterialExpressionTextureObject"
+    },
+    {
+      "category": "Coordinates",
+      "id": 5,
+      "pins": [
+        {
+          "default": [
+            0.0,
+            0.0
+          ],
+          "direction": "input",
+          "id": 1011,
+          "name": "Coordinate",
+          "type": "Vector2"
+        },
+        {
+          "default": 0.0,
+          "direction": "input",
+          "id": 1012,
+          "name": "Time",
+          "type": "Float"
+        },
+        {
+          "direction": "output",
+          "id": 1013,
+          "name": "UV",
+          "type": "Vector2"
+        }
+      ],
+      "position": {
+        "x": -200.0,
+        "y": -340.0
+      },
+      "properties": {
+        "speed": [
+          0.014999999664723873,
+          0.006000000052154064
+        ]
+      },
+      "type": "Panner",
+      "ueClass": "MaterialExpressionPanner"
+    },
+    {
+      "category": "Textures",
+      "id": 6,
+      "pins": [
+        {
+          "default": [
+            0.0,
+            0.0
+          ],
+          "direction": "input",
+          "id": 1014,
+          "name": "UVs",
+          "type": "Vector2"
+        },
+        {
+          "direction": "input",
+          "id": 1015,
+          "name": "Texture",
+          "type": "Texture"
+        },
+        {
+          "direction": "output",
+          "id": 1016,
+          "name": "RGBA",
+          "type": "Vector4"
+        },
+        {
+          "direction": "output",
+          "id": 1017,
+          "name": "RGB",
+          "type": "Vector3"
+        },
+        {
+          "direction": "output",
+          "id": 1018,
+          "name": "R",
+          "type": "Float"
+        },
+        {
+          "direction": "output",
+          "id": 1019,
+          "name": "G",
+          "type": "Float"
+        },
+        {
+          "direction": "output",
+          "id": 1020,
+          "name": "B",
+          "type": "Float"
+        },
+        {
+          "direction": "output",
+          "id": 1021,
+          "name": "A",
+          "type": "Float"
+        }
+      ],
+      "position": {
+        "x": -200.0,
+        "y": -150.0
+      },
+      "properties": {},
+      "type": "TextureSample",
+      "ueClass": "MaterialExpressionTextureSample"
+    },
+    {
+      "category": "Parameters",
+      "id": 7,
+      "pins": [
+        {
+          "direction": "output",
+          "id": 1022,
+          "name": "Value",
+          "type": "Vector4"
+        }
+      ],
+      "position": {
+        "x": -200.0,
+        "y": 110.0
+      },
+      "properties": {
+        "parameterName": "BaseTint",
+        "value": [
+          0.18000000715255737,
+          0.8199999928474426,
+          0.8999999761581421,
+          1.0
+        ]
+      },
+      "type": "VectorParameter",
+      "ueClass": "MaterialExpressionVectorParameter"
+    },
+    {
+      "category": "Math",
+      "id": 8,
+      "pins": [
+        {
+          "default": 1.0,
+          "direction": "input",
+          "id": 1023,
+          "name": "A",
+          "resolvedType": "Vector3",
+          "type": "Wildcard"
+        },
+        {
+          "default": 1.0,
+          "direction": "input",
+          "id": 1024,
+          "name": "B",
+          "resolvedType": "Vector4",
+          "type": "Wildcard"
+        },
+        {
+          "direction": "output",
+          "id": 1025,
+          "name": "Result",
+          "resolvedType": "Vector4",
+          "type": "Wildcard"
+        }
+      ],
+      "position": {
+        "x": 70.0,
+        "y": -300.0
+      },
+      "properties": {},
+      "type": "Multiply",
+      "ueClass": "MaterialExpressionMultiply"
+    },
+    {
+      "category": "Parameters",
+      "id": 9,
+      "pins": [
+        {
+          "direction": "output",
+          "id": 1026,
+          "name": "Value",
+          "type": "Float"
+        }
+      ],
+      "position": {
+        "x": 70.0,
+        "y": -120.0
+      },
+      "properties": {
+        "parameterName": "Roughness",
+        "value": 0.2199999988079071
+      },
+      "type": "ScalarParameter",
+      "ueClass": "MaterialExpressionScalarParameter"
+    },
+    {
+      "category": "Parameters",
+      "id": 10,
+      "pins": [
+        {
+          "direction": "output",
+          "id": 1027,
+          "name": "Value",
+          "type": "Float"
+        }
+      ],
+      "position": {
+        "x": 70.0,
+        "y": 20.0
+      },
+      "properties": {
+        "parameterName": "Metallic",
+        "value": 0.8999999761581421
+      },
+      "type": "ScalarParameter",
+      "ueClass": "MaterialExpressionScalarParameter"
+    },
+    {
+      "category": "Utility",
+      "id": 11,
+      "pins": [
+        {
+          "direction": "output",
+          "id": 1028,
+          "name": "Result",
+          "type": "Float"
+        }
+      ],
+      "position": {
+        "x": 70.0,
+        "y": 180.0
+      },
+      "properties": {
+        "baseReflectFraction": 0.05000000074505806,
+        "exponent": 5.0
+      },
+      "type": "Fresnel",
+      "ueClass": "MaterialExpressionFresnel"
+    },
+    {
+      "category": "Constants",
+      "id": 12,
+      "pins": [
+        {
+          "direction": "output",
+          "id": 1029,
+          "name": "Value",
+          "type": "Vector3"
+        }
+      ],
+      "position": {
+        "x": 70.0,
+        "y": 320.0
+      },
+      "properties": {
+        "value": [
+          0.0,
+          0.550000011920929,
+          0.699999988079071
+        ]
+      },
+      "type": "Constant3Vector",
+      "ueClass": "MaterialExpressionConstant3Vector"
+    },
+    {
+      "category": "Math",
+      "id": 13,
+      "pins": [
+        {
+          "default": 1.0,
+          "direction": "input",
+          "id": 1030,
+          "name": "A",
+          "resolvedType": "Float",
+          "type": "Wildcard"
+        },
+        {
+          "default": 1.0,
+          "direction": "input",
+          "id": 1031,
+          "name": "B",
+          "resolvedType": "Vector3",
+          "type": "Wildcard"
+        },
+        {
+          "direction": "output",
+          "id": 1032,
+          "name": "Result",
+          "resolvedType": "Vector3",
+          "type": "Wildcard"
+        }
+      ],
+      "position": {
+        "x": 330.0,
+        "y": 180.0
+      },
+      "properties": {},
+      "type": "Multiply",
+      "ueClass": "MaterialExpressionMultiply"
+    },
+    {
+      "category": "Math",
+      "id": 14,
+      "pins": [
+        {
+          "default": 0.0,
+          "direction": "input",
+          "id": 1033,
+          "name": "A",
+          "resolvedType": "Float",
+          "type": "Wildcard"
+        },
+        {
+          "default": 0.0,
+          "direction": "input",
+          "id": 1034,
+          "name": "B",
+          "resolvedType": "Vector3",
+          "type": "Wildcard"
+        },
+        {
+          "direction": "output",
+          "id": 1035,
+          "name": "Result",
+          "resolvedType": "Vector3",
+          "type": "Wildcard"
+        }
+      ],
+      "position": {
+        "x": 330.0,
+        "y": 380.0
+      },
+      "properties": {},
+      "type": "Add",
+      "ueClass": "MaterialExpressionAdd"
+    }
+  ],
+  "schema": "materialforge.ue5.material",
+  "version": 1
+}

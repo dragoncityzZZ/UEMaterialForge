@@ -1,0 +1,57 @@
+﻿id,filename,size,color_space,mode,status,prompt_en,prompt_zh,note
+1,T_White.png,8x8,linear,procedural,done,,,纯白常量，存 255；不用 1x1
+2,T_Black.png,8x8,linear,procedural,done,,,纯黑常量
+3,T_MidGray.png,8x8,linear,procedural,done,,,存 128 且 srgb=false 才是 0.502 线性
+4,T_FlatNormal.png,8x8,linear,procedural,done,,,存 128/128/255，法线必须是精确值
+5,T_Checker.png,1024x1024,sRGB,procedural,done,,,8x8 格，中性灰 #3A3A3A / #C8C8C8
+6,T_CheckerSmall.png,1024x1024,sRGB,procedural,done,,,16x16 格，看 mip 与摩尔纹
+7,T_UVChecker.png,1024x1024,sRGB,procedural,done,,,格方向色 + +U/+V 边条，左下角白 / 右上角黑判翻转
+8,T_Grid.png,1024x1024,sRGB,procedural,done,,,1/16 细线 + 1/4 主线，像素对齐
+9,T_GradientV.png,1024x16,sRGB,procedural,done,,,t=v，写入做 sRGB 编码；线性斜坡本身不可平铺
+10,T_GradientRadial.png,1024x1024,sRGB,procedural,done,,,wrap=clamp，不平铺
+11,T_NoiseWhite.png,512x512,linear,procedural,done,,,均匀随机，固定 seed
+12,T_NoisePerlin.png,512x512,linear,procedural,done,,,周期格 N=8，quintic 插值
+13,T_NoiseFBM.png,512x512,linear,procedural,done,,,5 层，起始频率 4，lac 2，gain 0.5
+14,T_MaskCircle.png,512x512,linear,procedural,done,,,r=0.8，2px 软边
+15,T_NoiseValue.png,512x512,linear,procedural,done,,,值噪声，比 perlin 更块状
+16,T_NoiseWorley.png,512x512,linear,procedural,done,,,8x8 抖动格，wrap 取邻格
+17,T_NoiseCellular.png,512x512,linear,procedural,done,,,R=F1 G=细胞hash B=F2-F1 A=细胞ID
+18,T_NoiseTurbulence.png,512x512,linear,procedural,done,,,5 层 abs(perlin)，归一化
+19,T_NoiseRidged.png,512x512,linear,procedural,done,,,5 层 (1-|perlin|)^2，归一化
+20,T_NoiseCurl.png,512x512,linear,procedural,done,,,由周期高度场差分求 curl，RG 编码方向，B 存强度
+21,T_NoiseBlue.png,256x256,linear,procedural,done,,,环形能量最小化，50% 密度
+22,T_NoiseGrain.png,256x256,linear,procedural,done,,,sigma 0.06 + 轻微行相关
+23,T_NoiseScratch.png,1024x1024,linear,procedural,done,,,700 条线段跨边界 wrap 复制
+24,T_StripesV.png,1024x1024,linear,procedural,done,,,8 条，smoothstep 软边
+25,T_StripesH.png,1024x1024,linear,procedural,done,,,同上旋转 90 度
+26,T_StripesD45.png,1024x1024,linear,procedural,done,,,frac((u+v)*8)，平铺天然无缝
+27,T_Dots.png,1024x1024,linear,procedural,done,,,8x8 圆点，半径 0.35 格
+28,T_HexGrid.png,1024x1024,linear,procedural,done,,,8 列 7 行，六边形 SDF；列数取偶数才能跨接缝对齐
+29,T_Brick.png,1024x1024,sRGB,generated+ai-alt,done,"seamless tileable red clay brick wall texture, running bond pattern with offset rows, light grey mortar joints, weathered rough surface with subtle chips and color variation per brick, straight-on orthographic view, flat uniform lighting",无缝平铺红砖墙，错缝砌法，浅灰砖缝，表面风化粗糙带轻微缺角，每块砖颜色略有差异，正视正交，均匀平光,已程序化生成；提示词只在想换一种更写实的砖时用，注意 AI 的 seamless 约一半不成立
+30,T_Tiles.png,1024x1024,sRGB,generated+ai-alt,done,"seamless tileable glazed ceramic tile grid, 4x4 white square tiles, thin light grey grout lines, slightly beveled rounded edges, faint glossy sheen, flat orthographic top-down",无缝平铺釉面方砖，4x4 白色瓷砖，浅灰细砖缝，边缘轻微倒角，微弱光泽，正交俯视,已程序化生成；提示词用于换风格
+31,T_Truchet.png,1024x1024,linear,procedural,done,,,8x8 格，hash 二选一弧线，线宽 10px
+32,T_Weave.png,1024x1024,sRGB,procedural,done,,,2/2 斜纹，16 根线，图案周期 4 才能跨接缝
+33,T_WaterRipples.png,1024x1024,linear,procedural,done,,,灰度中频段水波；torus 距离保证平铺，法线由它派生
+34,T_WaterNormal.png,1024x1024,linear,procedural,done,,,由 T_WaterRipples 求导，绿通道朝上
+35,T_WaterCaustics.png,1024x1024,linear,generated+ai-alt,done,"water caustics light pattern, bright thin web-like caustic lines on pure black background, grayscale, high contrast, dense at center fading outward, top-down, no objects",水面焦散光斑，纯黑背景上明亮细密网状亮线，灰度，高对比，中心密集向外渐疏,已程序化生成；AI 版焦散质感更自然，可作补充
+36,T_WaterFlow.png,512x512,linear,procedural,done,,,curl 场 + 15% 向心，RG 存方向 B 存速度
+37,T_WaterFoam.png,1024x1024,linear,procedural,done,,,fBm 团簇 + worley 气泡边，沿 v 方向 3 倍拉伸
+38,T_WaterWaves.png,1024x1024,linear,procedural,done,,,4 个方向整数频率正弦叠加，0/45/90/135 度
+39,T_Wood.png,1024x1024,sRGB,generated+ai-alt,done,"seamless tileable texture of quarter-sawn oak plank face, straight vertical grain, warm amber earlywood and dark brown latewood lines, fine fiber detail, matte unfinished surface, photorealistic",无缝平铺橡木径切板面，竖直直纹，暖琥珀早木与深棕晚木线条，细腻纤维，哑光未上漆,已程序化生成（同心年轮版）；要直纹写实木纹时用提示词重出
+40,T_Marble.png,1024x1024,sRGB,generated+ai-alt,done,"seamless tileable polished white marble texture, ivory base, fine sharp charcoal and grey veining with soft translucent halos around each vein, sparse veins, photorealistic stone surface",无缝平铺抛光白大理石，象牙白底，细锐炭灰脉络带柔光晕，纹理稀疏，写实石材,已程序化生成；AI 版脉络更自然
+41,T_Rust.png,1024x1024,sRGB,generated+ai-alt,done,"seamless tileable rust corrosion mask, flaking orange-brown patches with pitted corroded edges, some grey bare metal showing through, macro top-down, high contrast",无缝平铺锈蚀，片状剥落的橙褐锈斑，边缘坑蚀，局部露出灰色金属底，微距俯视，高对比,已程序化生成；提示词用于换磨损风格
+42,T_Dirt.png,1024x1024,linear,procedural,done,,,低对比 fBm + 斑块 + 细点
+43,T_Cloud.png,1024x1024,sRGB,generated+ai-alt,done,"cumulus cloud alpha mask on pure black background, soft wispy billowing edges, grayscale, high contrast, no sky gradient",纯黑背景积云 alpha 遮罩，轻柔翻卷边缘，灰度，高对比，无天空渐变,已程序化生成；AI 版云形更自然
+44,T_Smoke.png,512x512,sRGB,generated+ai-alt,done,"thin vertical smoke strands rising on pure black background, soft feathered translucent wisps, grayscale, high contrast, no source object",纯黑背景上升的细长烟缕，柔和羽化半透明，灰度，高对比，无燃烧物,已程序化生成；不平铺
+45,T_Fire.png,512x512,sRGB,generated+ai-alt,done,"vertical flame tongues on pure black background, orange-yellow fire with bright white hot cores, soft feathered edges, no logs no embers",纯黑背景竖直火焰舌，橙黄带白色热核，边缘羽化，无木柴余烬,已程序化生成；不平铺
+46,T_Sand.png,1024x1024,sRGB,generated+ai-alt,done,"seamless tileable fine beach sand texture, top-down macro, warm pale beige grains, subtle wind ripple bands, extremely fine grain detail, dry loose surface",无缝平铺细沙滩，俯视微距，暖米色细颗粒，隐约风成波纹，干燥松散表面,已程序化生成；提示词用于换沙质
+47,T_Scales.png,1024x1024,sRGB,generated+ai-alt,done,"seamless tileable reptile scale pattern, overlapping rounded scales in offset rows, deep green to charcoal gradient, sharp scale edges with thin highlight rims, macro top-down",无缝平铺鳞片，错行圆形鳞片互相覆盖，深绿到炭黑渐变，鳞边锐利带高光缘，微距俯视,已程序化生成；法线仍由高度通道派生
+48,T_Energy.png,512x512,linear,procedural,done,,,随机游走 + 分叉 + 两级辉光
+49,T_StarField.png,1024x1024,linear,procedural,done,,,3600 点，幂律亮度，跨边界 wrap
+50,T_Scanlines.png,512x512,linear,procedural,done,,,N=64 整数周期正弦 + 每 8 行加粗
+51,T_DefaultEquirect.hdr,1024x512,linear,procedural,done,,,Radiance RGBE，三点光 + 三分渐变天空，峰值约 12
+52,T_BrickMask.png,1024x1024,linear,procedural,done,,,与 T_Brick 同源；R=倒角高度 G=每砖 ID B=遮盖 A=灰缝
+53,T_TilesMask.png,1024x1024,linear,procedural,done,,,与 T_Tiles 同源；R=砖面 G=每瓦 ID B=倒角 A=灰缝
+54,T_RustMask.png,1024x1024,linear,procedural,done,,,与 T_Rust 同源；R=锈量 G=裸露金属 B=坑洞 A=1
+55,T_ScalesMask.png,1024x1024,linear,procedural,done,,,与 T_Scales 同源；R=鳞壳 G=每片 ID B=边缘高光 A=1
+56,T_ColorChecker10x10.png,2000x2000,sRGB,procedural,done,,,10×10 彩色编号棋盘；A1 在左上角，行号向下递增；不参与平铺

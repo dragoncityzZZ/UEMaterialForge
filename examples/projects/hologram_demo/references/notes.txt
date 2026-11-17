@@ -1,0 +1,2 @@
+Hologram Demo project
+This reference file is marked as a project resource, so deleting it will mark the project broken.

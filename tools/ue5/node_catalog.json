@@ -1,0 +1,2662 @@
+{
+  "nodes": [
+    {
+      "category": "Output",
+      "description": "Final material attributes used by the GLSL preview and by the UE5 import.",
+      "displayName": "Material Output",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Base Color",
+          "type": "Vector3"
+        },
+        {
+          "name": "Metallic",
+          "type": "Float"
+        },
+        {
+          "name": "Specular",
+          "type": "Float"
+        },
+        {
+          "name": "Roughness",
+          "type": "Float"
+        },
+        {
+          "name": "Emissive Color",
+          "type": "Vector3"
+        },
+        {
+          "name": "Normal",
+          "type": "Vector3"
+        },
+        {
+          "name": "Ambient Occlusion",
+          "type": "Float"
+        },
+        {
+          "name": "Opacity",
+          "type": "Float"
+        },
+        {
+          "name": "Opacity Mask",
+          "type": "Float"
+        },
+        {
+          "name": "World Position Offset",
+          "type": "Vector3"
+        },
+        {
+          "name": "Pixel Depth Offset",
+          "type": "Float"
+        },
+        {
+          "name": "Refraction",
+          "type": "Float"
+        },
+        {
+          "name": "Clear Coat",
+          "type": "Float"
+        },
+        {
+          "name": "Clear Coat Roughness",
+          "type": "Float"
+        },
+        {
+          "name": "Subsurface Color",
+          "type": "Vector3"
+        },
+        {
+          "name": "Anisotropy",
+          "type": "Float"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": true,
+      "outputs": [],
+      "properties": [],
+      "type": "MaterialOutput",
+      "ueClass": "Material"
+    },
+    {
+      "category": "Constants",
+      "description": "A single floating-point constant.",
+      "displayName": "Constant",
+      "hiddenInLibrary": false,
+      "inputs": [],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Value",
+          "type": "Float"
+        }
+      ],
+      "properties": [
+        {
+          "default": 0.5,
+          "key": "value",
+          "label": "Value"
+        }
+      ],
+      "type": "Constant",
+      "ueClass": "MaterialExpressionConstant"
+    },
+    {
+      "category": "Constants",
+      "description": "A two-component constant vector.",
+      "displayName": "Constant2Vector",
+      "hiddenInLibrary": false,
+      "inputs": [],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Value",
+          "type": "Vector2"
+        }
+      ],
+      "properties": [
+        {
+          "default": [
+            0.0,
+            0.0
+          ],
+          "key": "value",
+          "label": "Value"
+        }
+      ],
+      "type": "Constant2Vector",
+      "ueClass": "MaterialExpressionConstant2Vector"
+    },
+    {
+      "category": "Constants",
+      "description": "A three-component constant vector / color.",
+      "displayName": "Constant3Vector",
+      "hiddenInLibrary": false,
+      "inputs": [],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Value",
+          "type": "Vector3"
+        }
+      ],
+      "properties": [
+        {
+          "default": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "key": "value",
+          "label": "Value"
+        }
+      ],
+      "type": "Constant3Vector",
+      "ueClass": "MaterialExpressionConstant3Vector"
+    },
+    {
+      "category": "Constants",
+      "description": "A four-component constant vector / color.",
+      "displayName": "Constant4Vector",
+      "hiddenInLibrary": false,
+      "inputs": [],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Value",
+          "type": "Vector4"
+        }
+      ],
+      "properties": [
+        {
+          "default": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "key": "value",
+          "label": "Value"
+        }
+      ],
+      "type": "Constant4Vector",
+      "ueClass": "MaterialExpressionConstant4Vector"
+    },
+    {
+      "category": "Parameters",
+      "description": "A scalar material parameter. Emitted as a uniform and exported as a UE5 ScalarParameter.",
+      "displayName": "ScalarParameter",
+      "hiddenInLibrary": false,
+      "inputs": [],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Value",
+          "type": "Float"
+        }
+      ],
+      "properties": [
+        {
+          "default": "Roughness",
+          "key": "parameterName",
+          "label": "Parameter Name"
+        },
+        {
+          "default": 0.5,
+          "key": "value",
+          "label": "Default Value"
+        },
+        {
+          "default": "Default",
+          "key": "parameterGroup",
+          "label": "Group"
+        },
+        {
+          "default": 0.0,
+          "key": "sortPriority",
+          "label": "Sort Priority"
+        },
+        {
+          "default": "",
+          "key": "description",
+          "label": "Description"
+        },
+        {
+          "default": 0.0,
+          "key": "sliderMin",
+          "label": "Slider Min"
+        },
+        {
+          "default": 1.0,
+          "key": "sliderMax",
+          "label": "Slider Max"
+        }
+      ],
+      "type": "ScalarParameter",
+      "ueClass": "MaterialExpressionScalarParameter"
+    },
+    {
+      "category": "Parameters",
+      "description": "A vector material parameter. Emitted as a uniform and exported as a UE5 VectorParameter.",
+      "displayName": "VectorParameter",
+      "hiddenInLibrary": false,
+      "inputs": [],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Value",
+          "type": "Vector4"
+        }
+      ],
+      "properties": [
+        {
+          "default": "Tint",
+          "key": "parameterName",
+          "label": "Parameter Name"
+        },
+        {
+          "default": [
+            0.20000000298023224,
+            0.800000011920929,
+            1.0,
+            1.0
+          ],
+          "key": "value",
+          "label": "Default Value"
+        },
+        {
+          "default": "Default",
+          "key": "parameterGroup",
+          "label": "Group"
+        },
+        {
+          "default": 0.0,
+          "key": "sortPriority",
+          "label": "Sort Priority"
+        },
+        {
+          "default": "",
+          "key": "description",
+          "label": "Description"
+        }
+      ],
+      "type": "VectorParameter",
+      "ueClass": "MaterialExpressionVectorParameter"
+    },
+    {
+      "category": "Math",
+      "description": "Adds two values. Numeric types are promoted.",
+      "displayName": "Add",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "A",
+          "type": "Wildcard"
+        },
+        {
+          "name": "B",
+          "type": "Wildcard"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Wildcard"
+        }
+      ],
+      "properties": [],
+      "type": "Add",
+      "ueClass": "MaterialExpressionAdd"
+    },
+    {
+      "category": "Math",
+      "description": "Subtracts B from A. Numeric types are promoted.",
+      "displayName": "Subtract",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "A",
+          "type": "Wildcard"
+        },
+        {
+          "name": "B",
+          "type": "Wildcard"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Wildcard"
+        }
+      ],
+      "properties": [],
+      "type": "Subtract",
+      "ueClass": "MaterialExpressionSubtract"
+    },
+    {
+      "category": "Math",
+      "description": "Multiplies two values. Numeric types are promoted.",
+      "displayName": "Multiply",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "A",
+          "type": "Wildcard"
+        },
+        {
+          "name": "B",
+          "type": "Wildcard"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Wildcard"
+        }
+      ],
+      "properties": [],
+      "type": "Multiply",
+      "ueClass": "MaterialExpressionMultiply"
+    },
+    {
+      "category": "Math",
+      "description": "Divides A by B. Numeric types are promoted.",
+      "displayName": "Divide",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "A",
+          "type": "Wildcard"
+        },
+        {
+          "name": "B",
+          "type": "Wildcard"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Wildcard"
+        }
+      ],
+      "properties": [],
+      "type": "Divide",
+      "ueClass": "MaterialExpressionDivide"
+    },
+    {
+      "category": "Math",
+      "description": "Raises A to the power of B.",
+      "displayName": "Power",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "A",
+          "type": "Wildcard"
+        },
+        {
+          "name": "B",
+          "type": "Wildcard"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Wildcard"
+        }
+      ],
+      "properties": [],
+      "type": "Power",
+      "ueClass": "MaterialExpressionPower"
+    },
+    {
+      "category": "Math",
+      "description": "Component-wise minimum of A and B.",
+      "displayName": "Min",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "A",
+          "type": "Wildcard"
+        },
+        {
+          "name": "B",
+          "type": "Wildcard"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Wildcard"
+        }
+      ],
+      "properties": [],
+      "type": "Min",
+      "ueClass": "MaterialExpressionMin"
+    },
+    {
+      "category": "Math",
+      "description": "Component-wise maximum of A and B.",
+      "displayName": "Max",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "A",
+          "type": "Wildcard"
+        },
+        {
+          "name": "B",
+          "type": "Wildcard"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Wildcard"
+        }
+      ],
+      "properties": [],
+      "type": "Max",
+      "ueClass": "MaterialExpressionMax"
+    },
+    {
+      "category": "Math",
+      "description": "Component-wise floating-point remainder.",
+      "displayName": "Fmod",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "A",
+          "type": "Wildcard"
+        },
+        {
+          "name": "B",
+          "type": "Wildcard"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Wildcard"
+        }
+      ],
+      "properties": [],
+      "type": "Fmod",
+      "ueClass": "MaterialExpressionFmod"
+    },
+    {
+      "category": "Math",
+      "description": "Absolute value of each component.",
+      "displayName": "Abs",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Input",
+          "type": "Wildcard"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Wildcard"
+        }
+      ],
+      "properties": [],
+      "type": "Abs",
+      "ueClass": "MaterialExpressionAbs"
+    },
+    {
+      "category": "Math",
+      "description": "Smallest integer not less than the input.",
+      "displayName": "Ceil",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Input",
+          "type": "Wildcard"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Wildcard"
+        }
+      ],
+      "properties": [],
+      "type": "Ceil",
+      "ueClass": "MaterialExpressionCeil"
+    },
+    {
+      "category": "Math",
+      "description": "Largest integer not greater than the input.",
+      "displayName": "Floor",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Input",
+          "type": "Wildcard"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Wildcard"
+        }
+      ],
+      "properties": [],
+      "type": "Floor",
+      "ueClass": "MaterialExpressionFloor"
+    },
+    {
+      "category": "Math",
+      "description": "Fractional part of each component.",
+      "displayName": "Frac",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Input",
+          "type": "Wildcard"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Wildcard"
+        }
+      ],
+      "properties": [],
+      "type": "Frac",
+      "ueClass": "MaterialExpressionFrac"
+    },
+    {
+      "category": "Math",
+      "description": "Rounds each component to the nearest integer.",
+      "displayName": "Round",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Input",
+          "type": "Wildcard"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Wildcard"
+        }
+      ],
+      "properties": [],
+      "type": "Round",
+      "ueClass": "MaterialExpressionRound"
+    },
+    {
+      "category": "Math",
+      "description": "Square root of each component.",
+      "displayName": "Sqrt",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Input",
+          "type": "Wildcard"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Wildcard"
+        }
+      ],
+      "properties": [],
+      "type": "Sqrt",
+      "ueClass": "MaterialExpressionSqrt"
+    },
+    {
+      "category": "Math",
+      "description": "Returns 1 - Input for every component.",
+      "displayName": "OneMinus",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Input",
+          "type": "Wildcard"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Wildcard"
+        }
+      ],
+      "properties": [],
+      "type": "OneMinus",
+      "ueClass": "MaterialExpressionOneMinus"
+    },
+    {
+      "category": "Math",
+      "description": "Sine of each component.",
+      "displayName": "Sine",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Input",
+          "type": "Wildcard"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Wildcard"
+        }
+      ],
+      "properties": [],
+      "type": "Sine",
+      "ueClass": "MaterialExpressionSine"
+    },
+    {
+      "category": "Math",
+      "description": "Cosine of each component.",
+      "displayName": "Cosine",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Input",
+          "type": "Wildcard"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Wildcard"
+        }
+      ],
+      "properties": [],
+      "type": "Cosine",
+      "ueClass": "MaterialExpressionCosine"
+    },
+    {
+      "category": "Math",
+      "description": "Tangent of each component.",
+      "displayName": "Tangent",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Input",
+          "type": "Wildcard"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Wildcard"
+        }
+      ],
+      "properties": [],
+      "type": "Tangent",
+      "ueClass": "MaterialExpressionTangent"
+    },
+    {
+      "category": "Math",
+      "description": "Clamps each component to the 0..1 range.",
+      "displayName": "Saturate",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Input",
+          "type": "Wildcard"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Wildcard"
+        }
+      ],
+      "properties": [],
+      "type": "Saturate",
+      "ueClass": "MaterialExpressionSaturate"
+    },
+    {
+      "category": "Utility",
+      "description": "A compact pass-through node for routing a connection.",
+      "displayName": "Reroute",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Input",
+          "type": "Wildcard"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Output",
+          "type": "Wildcard"
+        }
+      ],
+      "properties": [],
+      "type": "Reroute",
+      "ueClass": "MaterialExpressionReroute"
+    },
+    {
+      "category": "Utility",
+      "description": "A resizable comment box for organizing the graph.",
+      "displayName": "Comment",
+      "hiddenInLibrary": false,
+      "inputs": [],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [],
+      "properties": [
+        {
+          "default": "Comment",
+          "key": "text",
+          "label": "Text"
+        },
+        {
+          "default": [
+            0.18000000715255737,
+            0.3400000035762787,
+            0.41999998688697815
+          ],
+          "key": "color",
+          "label": "Color"
+        }
+      ],
+      "type": "Comment",
+      "ueClass": ""
+    },
+    {
+      "category": "Math",
+      "description": "Returns -1, 0 or 1 for each component.",
+      "displayName": "Sign",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Input",
+          "type": "Wildcard"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Wildcard"
+        }
+      ],
+      "properties": [],
+      "type": "Sign",
+      "ueClass": "MaterialExpressionSign"
+    },
+    {
+      "category": "Math",
+      "description": "Discards the fractional part of each component.",
+      "displayName": "Truncate",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Input",
+          "type": "Wildcard"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Wildcard"
+        }
+      ],
+      "properties": [],
+      "type": "Truncate",
+      "ueClass": "MaterialExpressionTruncate"
+    },
+    {
+      "category": "Math",
+      "description": "Base-2 logarithm of each component.",
+      "displayName": "Logarithm2",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Input",
+          "type": "Wildcard"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Wildcard"
+        }
+      ],
+      "properties": [],
+      "type": "Logarithm2",
+      "ueClass": "MaterialExpressionLogarithm2"
+    },
+    {
+      "category": "Math",
+      "description": "Inverse sine of each component.",
+      "displayName": "Arcsine",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Input",
+          "type": "Wildcard"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Wildcard"
+        }
+      ],
+      "properties": [],
+      "type": "Arcsine",
+      "ueClass": "MaterialExpressionArcsine"
+    },
+    {
+      "category": "Math",
+      "description": "Inverse cosine of each component.",
+      "displayName": "Arccosine",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Input",
+          "type": "Wildcard"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Wildcard"
+        }
+      ],
+      "properties": [],
+      "type": "Arccosine",
+      "ueClass": "MaterialExpressionArccosine"
+    },
+    {
+      "category": "Math",
+      "description": "Inverse tangent of each component.",
+      "displayName": "Arctangent",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Input",
+          "type": "Wildcard"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Wildcard"
+        }
+      ],
+      "properties": [],
+      "type": "Arctangent",
+      "ueClass": "MaterialExpressionArctangent"
+    },
+    {
+      "category": "Math",
+      "description": "Returns 1 when A is greater than B.",
+      "displayName": "Greater",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "A",
+          "type": "Float"
+        },
+        {
+          "name": "B",
+          "type": "Float"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Float"
+        }
+      ],
+      "properties": [],
+      "type": "Greater",
+      "ueClass": "MaterialExpressionGreater"
+    },
+    {
+      "category": "Math",
+      "description": "Returns 1 when A is greater than or equal to B.",
+      "displayName": "GreaterEqual",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "A",
+          "type": "Float"
+        },
+        {
+          "name": "B",
+          "type": "Float"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Float"
+        }
+      ],
+      "properties": [],
+      "type": "GreaterEqual",
+      "ueClass": "MaterialExpressionGreaterEqual"
+    },
+    {
+      "category": "Math",
+      "description": "Returns 1 when A is less than B.",
+      "displayName": "Less",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "A",
+          "type": "Float"
+        },
+        {
+          "name": "B",
+          "type": "Float"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Float"
+        }
+      ],
+      "properties": [],
+      "type": "Less",
+      "ueClass": "MaterialExpressionLess"
+    },
+    {
+      "category": "Math",
+      "description": "Returns 1 when A is less than or equal to B.",
+      "displayName": "LessEqual",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "A",
+          "type": "Float"
+        },
+        {
+          "name": "B",
+          "type": "Float"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Float"
+        }
+      ],
+      "properties": [],
+      "type": "LessEqual",
+      "ueClass": "MaterialExpressionLessEqual"
+    },
+    {
+      "category": "Math",
+      "description": "Returns 1 when A equals B (within tolerance).",
+      "displayName": "Equal",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "A",
+          "type": "Float"
+        },
+        {
+          "name": "B",
+          "type": "Float"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Float"
+        }
+      ],
+      "properties": [],
+      "type": "Equal",
+      "ueClass": "MaterialExpressionEqual"
+    },
+    {
+      "category": "Math",
+      "description": "Returns 1 when A does not equal B.",
+      "displayName": "NotEqual",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "A",
+          "type": "Float"
+        },
+        {
+          "name": "B",
+          "type": "Float"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Float"
+        }
+      ],
+      "properties": [],
+      "type": "NotEqual",
+      "ueClass": "MaterialExpressionNotEqual"
+    },
+    {
+      "category": "Math",
+      "description": "Selects between the A > B, A == B and A < B values. Equivalent to MaterialExpressionIf.",
+      "displayName": "If",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "A",
+          "type": "Float"
+        },
+        {
+          "name": "B",
+          "type": "Float"
+        },
+        {
+          "name": "A > B",
+          "type": "Wildcard"
+        },
+        {
+          "name": "A == B",
+          "type": "Wildcard"
+        },
+        {
+          "name": "A < B",
+          "type": "Wildcard"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Wildcard"
+        }
+      ],
+      "properties": [],
+      "type": "If",
+      "ueClass": "MaterialExpressionIf"
+    },
+    {
+      "category": "Math",
+      "description": "Chooses A when Pick is greater than 0.5, otherwise B.",
+      "displayName": "Switch",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Pick",
+          "type": "Float"
+        },
+        {
+          "name": "A",
+          "type": "Wildcard"
+        },
+        {
+          "name": "B",
+          "type": "Wildcard"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Wildcard"
+        }
+      ],
+      "properties": [],
+      "type": "Switch",
+      "ueClass": "MaterialExpressionSwitch"
+    },
+    {
+      "category": "Utility",
+      "description": "Selects True or False at compile time. Also exported as a static switch.",
+      "displayName": "StaticSwitchParameter",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "True",
+          "type": "Wildcard"
+        },
+        {
+          "name": "False",
+          "type": "Wildcard"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Wildcard"
+        }
+      ],
+      "properties": [
+        {
+          "default": true,
+          "key": "value",
+          "label": "Default Value"
+        }
+      ],
+      "type": "StaticSwitchParameter",
+      "ueClass": "MaterialExpressionStaticSwitchParameter"
+    },
+    {
+      "category": "Math",
+      "description": "Rotates a position around an axis by Angle radians.",
+      "displayName": "RotateAboutAxis",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Position",
+          "type": "Vector3"
+        },
+        {
+          "name": "Axis",
+          "type": "Vector3"
+        },
+        {
+          "name": "Angle",
+          "type": "Float"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Vector3"
+        }
+      ],
+      "properties": [],
+      "type": "RotateAboutAxis",
+      "ueClass": "MaterialExpressionRotateAboutAxis"
+    },
+    {
+      "category": "Math",
+      "description": "Appends the components of A and B into a larger vector.",
+      "displayName": "AppendVector",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "A",
+          "type": "Wildcard"
+        },
+        {
+          "name": "B",
+          "type": "Wildcard"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Wildcard"
+        }
+      ],
+      "properties": [],
+      "type": "AppendVector",
+      "ueClass": "MaterialExpressionAppendVector"
+    },
+    {
+      "category": "Math",
+      "description": "Selects R/G/B/A channels from the input. The output type follows the number of enabled channels.",
+      "displayName": "ComponentMask",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Input",
+          "type": "Wildcard"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Wildcard"
+        }
+      ],
+      "properties": [
+        {
+          "default": true,
+          "key": "r",
+          "label": "R"
+        },
+        {
+          "default": true,
+          "key": "g",
+          "label": "G"
+        },
+        {
+          "default": true,
+          "key": "b",
+          "label": "B"
+        },
+        {
+          "default": true,
+          "key": "a",
+          "label": "A"
+        }
+      ],
+      "type": "ComponentMask",
+      "ueClass": "MaterialExpressionComponentMask"
+    },
+    {
+      "category": "Math",
+      "description": "Splits a Vector2 into its scalar components.",
+      "displayName": "BreakVector2",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Input",
+          "type": "Vector2"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "R",
+          "type": "Float"
+        },
+        {
+          "name": "G",
+          "type": "Float"
+        }
+      ],
+      "properties": [],
+      "type": "BreakVector2",
+      "ueClass": "MaterialExpressionBreakVector2"
+    },
+    {
+      "category": "Math",
+      "description": "Splits a Vector3 into its scalar components.",
+      "displayName": "BreakVector3",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Input",
+          "type": "Vector3"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "R",
+          "type": "Float"
+        },
+        {
+          "name": "G",
+          "type": "Float"
+        },
+        {
+          "name": "B",
+          "type": "Float"
+        }
+      ],
+      "properties": [],
+      "type": "BreakVector3",
+      "ueClass": "MaterialExpressionBreakVector3"
+    },
+    {
+      "category": "Math",
+      "description": "Splits a Vector4 into its scalar components.",
+      "displayName": "BreakVector4",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Input",
+          "type": "Vector4"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "R",
+          "type": "Float"
+        },
+        {
+          "name": "G",
+          "type": "Float"
+        },
+        {
+          "name": "B",
+          "type": "Float"
+        },
+        {
+          "name": "A",
+          "type": "Float"
+        }
+      ],
+      "properties": [],
+      "type": "BreakVector4",
+      "ueClass": "MaterialExpressionBreakVector4"
+    },
+    {
+      "category": "Math",
+      "description": "Length (magnitude) of a scalar or vector.",
+      "displayName": "Length",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Input",
+          "type": "Wildcard"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Float"
+        }
+      ],
+      "properties": [],
+      "type": "Length",
+      "ueClass": "MaterialExpressionLength"
+    },
+    {
+      "category": "Math",
+      "description": "Distance between two scalars or vectors.",
+      "displayName": "Distance",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "A",
+          "type": "Wildcard"
+        },
+        {
+          "name": "B",
+          "type": "Wildcard"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Float"
+        }
+      ],
+      "properties": [],
+      "type": "Distance",
+      "ueClass": "MaterialExpressionDistance"
+    },
+    {
+      "category": "Math",
+      "description": "Smooth Hermite interpolation between Min and Max.",
+      "displayName": "SmoothStep",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Value",
+          "type": "Wildcard"
+        },
+        {
+          "name": "Min",
+          "type": "Wildcard"
+        },
+        {
+          "name": "Max",
+          "type": "Wildcard"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Wildcard"
+        }
+      ],
+      "properties": [],
+      "type": "SmoothStep",
+      "ueClass": "MaterialExpressionSmoothStep"
+    },
+    {
+      "category": "Math",
+      "description": "Returns 0 when Value is below Edge, otherwise 1.",
+      "displayName": "Step",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Value",
+          "type": "Wildcard"
+        },
+        {
+          "name": "Edge",
+          "type": "Wildcard"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Wildcard"
+        }
+      ],
+      "properties": [],
+      "type": "Step",
+      "ueClass": "MaterialExpressionStep"
+    },
+    {
+      "category": "Math",
+      "description": "Returns Input * Scale + Bias.",
+      "displayName": "ConstantBiasScale",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Input",
+          "type": "Wildcard"
+        },
+        {
+          "name": "Bias",
+          "type": "Wildcard"
+        },
+        {
+          "name": "Scale",
+          "type": "Wildcard"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Wildcard"
+        }
+      ],
+      "properties": [],
+      "type": "ConstantBiasScale",
+      "ueClass": "MaterialExpressionConstantBiasScale"
+    },
+    {
+      "category": "Math",
+      "description": "Masks based on the distance from A to B inside Radius.",
+      "displayName": "SphereMask",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "A",
+          "type": "Vector3"
+        },
+        {
+          "name": "B",
+          "type": "Vector3"
+        },
+        {
+          "name": "Radius",
+          "type": "Float"
+        },
+        {
+          "name": "Hardness",
+          "type": "Float"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Float"
+        }
+      ],
+      "properties": [],
+      "type": "SphereMask",
+      "ueClass": "MaterialExpressionSphereMask"
+    },
+    {
+      "category": "Math",
+      "description": "Deterministic value noise from a 3D position.",
+      "displayName": "Noise",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Position",
+          "type": "Vector3"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Float"
+        }
+      ],
+      "properties": [
+        {
+          "default": 1.0,
+          "key": "scale",
+          "label": "Scale"
+        }
+      ],
+      "type": "Noise",
+      "ueClass": "MaterialExpressionNoise"
+    },
+    {
+      "category": "Math",
+      "description": "Linear interpolation between A and B by Alpha.",
+      "displayName": "Lerp",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "A",
+          "type": "Wildcard"
+        },
+        {
+          "name": "B",
+          "type": "Wildcard"
+        },
+        {
+          "name": "Alpha",
+          "type": "Float"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Wildcard"
+        }
+      ],
+      "properties": [],
+      "type": "Lerp",
+      "ueClass": "MaterialExpressionLerp"
+    },
+    {
+      "category": "Math",
+      "description": "Clamps Value between Min and Max.",
+      "displayName": "Clamp",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Value",
+          "type": "Wildcard"
+        },
+        {
+          "name": "Min",
+          "type": "Wildcard"
+        },
+        {
+          "name": "Max",
+          "type": "Wildcard"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Wildcard"
+        }
+      ],
+      "properties": [],
+      "type": "Clamp",
+      "ueClass": "MaterialExpressionClamp"
+    },
+    {
+      "category": "Math",
+      "description": "Dot product of two vectors. Returns a scalar.",
+      "displayName": "DotProduct",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "A",
+          "type": "Wildcard"
+        },
+        {
+          "name": "B",
+          "type": "Wildcard"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Float"
+        }
+      ],
+      "properties": [],
+      "type": "DotProduct",
+      "ueClass": "MaterialExpressionDotProduct"
+    },
+    {
+      "category": "Math",
+      "description": "Cross product of two three-component vectors.",
+      "displayName": "CrossProduct",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "A",
+          "type": "Vector3"
+        },
+        {
+          "name": "B",
+          "type": "Vector3"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Vector3"
+        }
+      ],
+      "properties": [],
+      "type": "CrossProduct",
+      "ueClass": "MaterialExpressionCrossProduct"
+    },
+    {
+      "category": "Math",
+      "description": "Returns a unit-length vector. Useful for normals and directions.",
+      "displayName": "Normalize",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Input",
+          "type": "Wildcard"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Wildcard"
+        }
+      ],
+      "properties": [],
+      "type": "Normalize",
+      "ueClass": "MaterialExpressionNormalize"
+    },
+    {
+      "category": "Utility",
+      "description": "Blends a color toward its luminance using Fraction.",
+      "displayName": "Desaturation",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Color",
+          "type": "Vector3"
+        },
+        {
+          "name": "Fraction",
+          "type": "Float"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Vector3"
+        }
+      ],
+      "properties": [],
+      "type": "Desaturation",
+      "ueClass": "MaterialExpressionDesaturation"
+    },
+    {
+      "category": "Utility",
+      "description": "View-angle fresnel term. This preview uses the geometric normal.",
+      "displayName": "Fresnel",
+      "hiddenInLibrary": false,
+      "inputs": [],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Result",
+          "type": "Float"
+        }
+      ],
+      "properties": [
+        {
+          "default": 5.0,
+          "key": "exponent",
+          "label": "Exponent"
+        },
+        {
+          "default": 0.03999999910593033,
+          "key": "baseReflectFraction",
+          "label": "Base Reflect Fraction"
+        }
+      ],
+      "type": "Fresnel",
+      "ueClass": "MaterialExpressionFresnel"
+    },
+    {
+      "category": "Coordinates",
+      "description": "Mesh UV coordinates scaled by U/V tiling.",
+      "displayName": "TextureCoordinate",
+      "hiddenInLibrary": false,
+      "inputs": [],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "UV",
+          "type": "Vector2"
+        }
+      ],
+      "properties": [
+        {
+          "default": 1.0,
+          "key": "uTiling",
+          "label": "U Tiling"
+        },
+        {
+          "default": 1.0,
+          "key": "vTiling",
+          "label": "V Tiling"
+        }
+      ],
+      "type": "TextureCoordinate",
+      "ueClass": "MaterialExpressionTextureCoordinate"
+    },
+    {
+      "category": "Coordinates",
+      "description": "Scrolls UV coordinates over time. Time defaults to the material time.",
+      "displayName": "Panner",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Coordinate",
+          "type": "Vector2"
+        },
+        {
+          "name": "Time",
+          "type": "Float"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "UV",
+          "type": "Vector2"
+        }
+      ],
+      "properties": [
+        {
+          "default": [
+            0.05000000074505806,
+            0.019999999552965164
+          ],
+          "key": "speed",
+          "label": "Speed"
+        }
+      ],
+      "type": "Panner",
+      "ueClass": "MaterialExpressionPanner"
+    },
+    {
+      "category": "Coordinates",
+      "description": "Rotates UV coordinates around a center point over time.",
+      "displayName": "Rotator",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Coordinate",
+          "type": "Vector2"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "UV",
+          "type": "Vector2"
+        }
+      ],
+      "properties": [
+        {
+          "default": [
+            0.5,
+            0.5
+          ],
+          "key": "center",
+          "label": "Center"
+        },
+        {
+          "default": 0.10000000149011612,
+          "key": "speed",
+          "label": "Speed"
+        }
+      ],
+      "type": "Rotator",
+      "ueClass": "MaterialExpressionRotator"
+    },
+    {
+      "category": "Coordinates",
+      "description": "Offsets UV coordinates using a height value. The preview uses a simple parallax approximation without view-dependent depth.",
+      "displayName": "BumpOffset",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Coordinate",
+          "type": "Vector2"
+        },
+        {
+          "name": "Height",
+          "type": "Float"
+        },
+        {
+          "name": "HeightRatio",
+          "type": "Float"
+        },
+        {
+          "name": "ReferencePlane",
+          "type": "Float"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "UV",
+          "type": "Vector2"
+        }
+      ],
+      "properties": [],
+      "type": "BumpOffset",
+      "ueClass": "MaterialExpressionBumpOffset"
+    },
+    {
+      "category": "Coordinates",
+      "description": "Global material time in seconds.",
+      "displayName": "Time",
+      "hiddenInLibrary": false,
+      "inputs": [],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Time",
+          "type": "Float"
+        }
+      ],
+      "properties": [],
+      "type": "Time",
+      "ueClass": "MaterialExpressionTime"
+    },
+    {
+      "category": "Coordinates",
+      "description": "World-space position of the shaded pixel.",
+      "displayName": "WorldPosition",
+      "hiddenInLibrary": false,
+      "inputs": [],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "World Position",
+          "type": "Vector3"
+        }
+      ],
+      "properties": [],
+      "type": "WorldPosition",
+      "ueClass": "MaterialExpressionWorldPosition"
+    },
+    {
+      "category": "Coordinates",
+      "description": "Interpolated world-space vertex normal.",
+      "displayName": "VertexNormal",
+      "hiddenInLibrary": false,
+      "inputs": [],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Vertex Normal",
+          "type": "Vector3"
+        }
+      ],
+      "properties": [],
+      "type": "VertexNormal",
+      "ueClass": "MaterialExpressionVertexNormal"
+    },
+    {
+      "category": "Coordinates",
+      "description": "Normalized world-space vector from the shaded pixel to the camera.",
+      "displayName": "CameraVector",
+      "hiddenInLibrary": false,
+      "inputs": [],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Camera Vector",
+          "type": "Vector3"
+        }
+      ],
+      "properties": [],
+      "type": "CameraVector",
+      "ueClass": "MaterialExpressionCameraVector"
+    },
+    {
+      "category": "Coordinates",
+      "description": "Distance from the preview camera to the shaded pixel.",
+      "displayName": "PixelDepth",
+      "hiddenInLibrary": false,
+      "inputs": [],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Depth",
+          "type": "Float"
+        }
+      ],
+      "properties": [],
+      "type": "PixelDepth",
+      "ueClass": "MaterialExpressionPixelDepth"
+    },
+    {
+      "category": "Coordinates",
+      "description": "Scene depth at the shaded pixel. The preview approximates it with camera distance.",
+      "displayName": "SceneDepth",
+      "hiddenInLibrary": false,
+      "inputs": [],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Depth",
+          "type": "Float"
+        }
+      ],
+      "properties": [],
+      "type": "SceneDepth",
+      "ueClass": "MaterialExpressionSceneDepth"
+    },
+    {
+      "category": "Coordinates",
+      "description": "World-space position of the preview camera.",
+      "displayName": "CameraPosition",
+      "hiddenInLibrary": false,
+      "inputs": [],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Camera Position",
+          "type": "Vector3"
+        }
+      ],
+      "properties": [],
+      "type": "CameraPosition",
+      "ueClass": "MaterialExpressionCameraPositionWS"
+    },
+    {
+      "category": "Coordinates",
+      "description": "World-space position of the preview object (origin).",
+      "displayName": "ObjectPosition",
+      "hiddenInLibrary": false,
+      "inputs": [],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Object Position",
+          "type": "Vector3"
+        }
+      ],
+      "properties": [],
+      "type": "ObjectPosition",
+      "ueClass": "MaterialExpressionObjectPositionWS"
+    },
+    {
+      "category": "Coordinates",
+      "description": "World-space position of the owning actor (origin in the preview).",
+      "displayName": "ActorPosition",
+      "hiddenInLibrary": false,
+      "inputs": [],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Actor Position",
+          "type": "Vector3"
+        }
+      ],
+      "properties": [],
+      "type": "ActorPosition",
+      "ueClass": "MaterialExpressionActorPositionWS"
+    },
+    {
+      "category": "Coordinates",
+      "description": "Direction toward the key studio light.",
+      "displayName": "LightVector",
+      "hiddenInLibrary": false,
+      "inputs": [],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Light Vector",
+          "type": "Vector3"
+        }
+      ],
+      "properties": [],
+      "type": "LightVector",
+      "ueClass": "MaterialExpressionLightVector"
+    },
+    {
+      "category": "Coordinates",
+      "description": "Camera vector reflected around the surface normal.",
+      "displayName": "ReflectionVector",
+      "hiddenInLibrary": false,
+      "inputs": [],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Reflection Vector",
+          "type": "Vector3"
+        }
+      ],
+      "properties": [],
+      "type": "ReflectionVector",
+      "ueClass": "MaterialExpressionReflectionVectorWS"
+    },
+    {
+      "category": "Coordinates",
+      "description": "Normalized screen-space position (viewport UV).",
+      "displayName": "ScreenPosition",
+      "hiddenInLibrary": false,
+      "inputs": [],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Screen Position",
+          "type": "Vector2"
+        }
+      ],
+      "properties": [],
+      "type": "ScreenPosition",
+      "ueClass": "MaterialExpressionScreenPosition"
+    },
+    {
+      "category": "Coordinates",
+      "description": "Current preview viewport size in pixels.",
+      "displayName": "ViewSize",
+      "hiddenInLibrary": false,
+      "inputs": [],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "View Size",
+          "type": "Vector2"
+        }
+      ],
+      "properties": [],
+      "type": "ViewSize",
+      "ueClass": "MaterialExpressionViewSize"
+    },
+    {
+      "category": "Coordinates",
+      "description": "Vertex color. The preview mesh has no vertex colors, so this is white.",
+      "displayName": "VertexColor",
+      "hiddenInLibrary": false,
+      "inputs": [],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Vertex Color",
+          "type": "Vector4"
+        }
+      ],
+      "properties": [],
+      "type": "VertexColor",
+      "ueClass": "MaterialExpressionVertexColor"
+    },
+    {
+      "category": "Utility",
+      "description": "Front/back facing sign. The preview is single-sided, so this is 1.",
+      "displayName": "TwoSidedSign",
+      "hiddenInLibrary": false,
+      "inputs": [],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Sign",
+          "type": "Float"
+        }
+      ],
+      "properties": [],
+      "type": "TwoSidedSign",
+      "ueClass": "MaterialExpressionTwoSidedSign"
+    },
+    {
+      "category": "Textures",
+      "description": "Shared texture sampler settings. Connect to a TextureSample Sampler input.",
+      "displayName": "Sampler",
+      "hiddenInLibrary": false,
+      "inputs": [],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Sampler",
+          "type": "Sampler"
+        }
+      ],
+      "properties": [
+        {
+          "default": "Linear",
+          "key": "filter",
+          "label": "Filter"
+        },
+        {
+          "default": "Repeat",
+          "key": "addressU",
+          "label": "Address U"
+        },
+        {
+          "default": "Repeat",
+          "key": "addressV",
+          "label": "Address V"
+        },
+        {
+          "default": true,
+          "key": "srgb",
+          "label": "sRGB"
+        },
+        {
+          "default": 0.0,
+          "key": "mipBias",
+          "label": "Mip Bias"
+        },
+        {
+          "default": 8.0,
+          "key": "maxAnisotropy",
+          "label": "Max Anisotropy"
+        },
+        {
+          "default": "World",
+          "key": "textureGroup",
+          "label": "Texture Group"
+        }
+      ],
+      "type": "Sampler",
+      "ueClass": "MaterialExpressionSampler"
+    },
+    {
+      "category": "Textures",
+      "description": "A texture asset reference. Connect it to a TextureSample's Texture input.",
+      "displayName": "TextureObject",
+      "hiddenInLibrary": false,
+      "inputs": [],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Texture",
+          "type": "Texture"
+        }
+      ],
+      "properties": [
+        {
+          "default": "assets/textures/T_HoloGrid.png",
+          "key": "texture",
+          "label": "Texture"
+        },
+        {
+          "default": "Linear",
+          "key": "filter",
+          "label": "Filter"
+        },
+        {
+          "default": "Repeat",
+          "key": "addressU",
+          "label": "Address U"
+        },
+        {
+          "default": "Repeat",
+          "key": "addressV",
+          "label": "Address V"
+        },
+        {
+          "default": true,
+          "key": "srgb",
+          "label": "sRGB"
+        },
+        {
+          "default": 0.0,
+          "key": "mipBias",
+          "label": "Mip Bias"
+        },
+        {
+          "default": 8.0,
+          "key": "maxAnisotropy",
+          "label": "Max Anisotropy"
+        },
+        {
+          "default": "World",
+          "key": "textureGroup",
+          "label": "Texture Group"
+        }
+      ],
+      "type": "TextureObject",
+      "ueClass": "MaterialExpressionTextureObject"
+    },
+    {
+      "category": "Textures",
+      "description": "A named texture parameter that can be overridden per material instance.",
+      "displayName": "TextureObjectParameter",
+      "hiddenInLibrary": false,
+      "inputs": [],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Texture",
+          "type": "Texture"
+        }
+      ],
+      "properties": [
+        {
+          "default": "Texture",
+          "key": "parameterName",
+          "label": "Parameter Name"
+        },
+        {
+          "default": "assets/textures/T_HoloGrid.png",
+          "key": "texture",
+          "label": "Texture"
+        },
+        {
+          "default": "Linear",
+          "key": "filter",
+          "label": "Filter"
+        },
+        {
+          "default": "Repeat",
+          "key": "addressU",
+          "label": "Address U"
+        },
+        {
+          "default": "Repeat",
+          "key": "addressV",
+          "label": "Address V"
+        },
+        {
+          "default": true,
+          "key": "srgb",
+          "label": "sRGB"
+        },
+        {
+          "default": 0.0,
+          "key": "mipBias",
+          "label": "Mip Bias"
+        },
+        {
+          "default": 8.0,
+          "key": "maxAnisotropy",
+          "label": "Max Anisotropy"
+        },
+        {
+          "default": "World",
+          "key": "textureGroup",
+          "label": "Texture Group"
+        }
+      ],
+      "type": "TextureObjectParameter",
+      "ueClass": "MaterialExpressionTextureObjectParameter"
+    },
+    {
+      "category": "Textures",
+      "description": "Samples a texture. UVs default to the mesh UV0 channel.",
+      "displayName": "TextureSample",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "UVs",
+          "type": "Vector2"
+        },
+        {
+          "name": "Texture",
+          "type": "Texture"
+        },
+        {
+          "name": "Sampler",
+          "type": "Sampler"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "RGBA",
+          "type": "Vector4"
+        },
+        {
+          "name": "RGB",
+          "type": "Vector3"
+        },
+        {
+          "name": "R",
+          "type": "Float"
+        },
+        {
+          "name": "G",
+          "type": "Float"
+        },
+        {
+          "name": "B",
+          "type": "Float"
+        },
+        {
+          "name": "A",
+          "type": "Float"
+        }
+      ],
+      "properties": [],
+      "type": "TextureSample",
+      "ueClass": "MaterialExpressionTextureSample"
+    },
+    {
+      "category": "Textures",
+      "description": "Texture sample exposed as a named texture parameter.",
+      "displayName": "TextureSampleParameter2D",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "UVs",
+          "type": "Vector2"
+        },
+        {
+          "name": "Texture",
+          "type": "Texture"
+        },
+        {
+          "name": "Sampler",
+          "type": "Sampler"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "RGBA",
+          "type": "Vector4"
+        },
+        {
+          "name": "RGB",
+          "type": "Vector3"
+        },
+        {
+          "name": "R",
+          "type": "Float"
+        },
+        {
+          "name": "G",
+          "type": "Float"
+        },
+        {
+          "name": "B",
+          "type": "Float"
+        },
+        {
+          "name": "A",
+          "type": "Float"
+        }
+      ],
+      "properties": [
+        {
+          "default": "Texture",
+          "key": "parameterName",
+          "label": "Parameter Name"
+        },
+        {
+          "default": "assets/textures/T_HoloGrid.png",
+          "key": "texture",
+          "label": "Texture"
+        },
+        {
+          "default": "Linear",
+          "key": "filter",
+          "label": "Filter"
+        },
+        {
+          "default": "Repeat",
+          "key": "addressU",
+          "label": "Address U"
+        },
+        {
+          "default": "Repeat",
+          "key": "addressV",
+          "label": "Address V"
+        },
+        {
+          "default": true,
+          "key": "srgb",
+          "label": "sRGB"
+        },
+        {
+          "default": 0.0,
+          "key": "mipBias",
+          "label": "Mip Bias"
+        },
+        {
+          "default": 8.0,
+          "key": "maxAnisotropy",
+          "label": "Max Anisotropy"
+        },
+        {
+          "default": "World",
+          "key": "textureGroup",
+          "label": "Texture Group"
+        }
+      ],
+      "type": "TextureSampleParameter2D",
+      "ueClass": "MaterialExpressionTextureSampleParameter2D"
+    },
+    {
+      "category": "Textures",
+      "description": "Scene texture sampling node. Preview provides Color/Size/InvSize but uses a neutral placeholder color because scene capture is not linked in this version.",
+      "displayName": "SceneTexture",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "UVs",
+          "type": "Vector2"
+        }
+      ],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Color",
+          "type": "Vector4"
+        },
+        {
+          "name": "Size",
+          "type": "Vector2"
+        },
+        {
+          "name": "InvSize",
+          "type": "Vector2"
+        }
+      ],
+      "properties": [
+        {
+          "default": "Scene Color",
+          "key": "sceneTextureId",
+          "label": "Scene Texture Id"
+        }
+      ],
+      "type": "SceneTexture",
+      "ueClass": "MaterialExpressionSceneTexture"
+    },
+    {
+      "category": "Functions",
+      "description": "Calls a reusable blueprint function asset. Drag a function asset from the Content Browser or the Material Functions section into the graph.",
+      "displayName": "Material Function Call",
+      "hiddenInLibrary": true,
+      "inputs": [],
+      "isFunctionOnly": false,
+      "isMaterialOutput": false,
+      "outputs": [],
+      "properties": [
+        {
+          "default": "",
+          "key": "functionPath",
+          "label": "Function Asset"
+        },
+        {
+          "default": "Material Function",
+          "key": "functionName",
+          "label": "Function Name"
+        }
+      ],
+      "type": "MaterialFunctionCall",
+      "ueClass": "MaterialExpressionMaterialFunctionCall"
+    },
+    {
+      "category": "Function",
+      "description": "Exposes a named typed input on a blueprint function.",
+      "displayName": "Function Input",
+      "hiddenInLibrary": false,
+      "inputs": [],
+      "isFunctionOnly": true,
+      "isMaterialOutput": false,
+      "outputs": [
+        {
+          "name": "Value",
+          "type": "Float"
+        }
+      ],
+      "properties": [
+        {
+          "default": "Input",
+          "key": "inputName",
+          "label": "Input Name"
+        },
+        {
+          "default": "Float",
+          "key": "pinType",
+          "label": "Type"
+        }
+      ],
+      "type": "FunctionInput",
+      "ueClass": "MaterialExpressionFunctionInput"
+    },
+    {
+      "category": "Function",
+      "description": "Collects a named typed result from a blueprint function.",
+      "displayName": "Function Output",
+      "hiddenInLibrary": false,
+      "inputs": [
+        {
+          "name": "Value",
+          "type": "Float"
+        }
+      ],
+      "isFunctionOnly": true,
+      "isMaterialOutput": false,
+      "outputs": [],
+      "properties": [
+        {
+          "default": "Output",
+          "key": "outputName",
+          "label": "Output Name"
+        },
+        {
+          "default": "Float",
+          "key": "pinType",
+          "label": "Type"
+        }
+      ],
+      "type": "FunctionOutput",
+      "ueClass": "MaterialExpressionFunctionOutput"
+    }
+  ],
+  "schema": "materialforge.node_catalog",
+  "version": 1
+}

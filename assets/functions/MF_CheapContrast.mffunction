@@ -1,0 +1,326 @@
+{
+  "engine": "Unreal Engine 5",
+  "generator": "MaterialForge 1.1.0",
+  "links": [
+    {
+      "fromNode": 1,
+      "fromPin": 1000,
+      "fromPinName": "Value",
+      "id": 100000,
+      "toNode": 4,
+      "toPin": 1003,
+      "toPinName": "A"
+    },
+    {
+      "fromNode": 3,
+      "fromPin": 1002,
+      "fromPinName": "Value",
+      "id": 100001,
+      "toNode": 4,
+      "toPin": 1004,
+      "toPinName": "B"
+    },
+    {
+      "fromNode": 4,
+      "fromPin": 1005,
+      "fromPinName": "Result",
+      "id": 100002,
+      "toNode": 5,
+      "toPin": 1006,
+      "toPinName": "A"
+    },
+    {
+      "fromNode": 2,
+      "fromPin": 1001,
+      "fromPinName": "Value",
+      "id": 100003,
+      "toNode": 5,
+      "toPin": 1007,
+      "toPinName": "B"
+    },
+    {
+      "fromNode": 5,
+      "fromPin": 1008,
+      "fromPinName": "Result",
+      "id": 100004,
+      "toNode": 6,
+      "toPin": 1009,
+      "toPinName": "A"
+    },
+    {
+      "fromNode": 3,
+      "fromPin": 1002,
+      "fromPinName": "Value",
+      "id": 100005,
+      "toNode": 6,
+      "toPin": 1010,
+      "toPinName": "B"
+    },
+    {
+      "fromNode": 6,
+      "fromPin": 1011,
+      "fromPinName": "Result",
+      "id": 100006,
+      "toNode": 7,
+      "toPin": 1012,
+      "toPinName": "Value"
+    },
+    {
+      "fromNode": 7,
+      "fromPin": 1015,
+      "fromPinName": "Result",
+      "id": 100007,
+      "toNode": 8,
+      "toPin": 1016,
+      "toPinName": "Value"
+    }
+  ],
+  "material": {
+    "blendMode": "Opaque",
+    "domain": "Surface",
+    "name": "MF_CheapContrast",
+    "shadingModel": "DefaultLit",
+    "twoSided": false
+  },
+  "nodes": [
+    {
+      "category": "Function",
+      "id": 1,
+      "pins": [
+        {
+          "direction": "output",
+          "id": 1000,
+          "name": "Value",
+          "type": "Float"
+        }
+      ],
+      "position": {
+        "x": -720.0,
+        "y": -80.0
+      },
+      "properties": {
+        "inputName": "Value"
+      },
+      "type": "FunctionInput",
+      "ueClass": "MaterialExpressionFunctionInput"
+    },
+    {
+      "category": "Function",
+      "id": 2,
+      "pins": [
+        {
+          "direction": "output",
+          "id": 1001,
+          "name": "Value",
+          "type": "Float"
+        }
+      ],
+      "position": {
+        "x": -720.0,
+        "y": 100.0
+      },
+      "properties": {
+        "inputName": "Contrast"
+      },
+      "type": "FunctionInput",
+      "ueClass": "MaterialExpressionFunctionInput"
+    },
+    {
+      "category": "Constants",
+      "id": 3,
+      "pins": [
+        {
+          "direction": "output",
+          "id": 1002,
+          "name": "Value",
+          "type": "Float"
+        }
+      ],
+      "position": {
+        "x": -720.0,
+        "y": 260.0
+      },
+      "properties": {
+        "value": 0.5
+      },
+      "type": "Constant",
+      "ueClass": "MaterialExpressionConstant"
+    },
+    {
+      "category": "Math",
+      "id": 4,
+      "pins": [
+        {
+          "default": 0.0,
+          "direction": "input",
+          "id": 1003,
+          "name": "A",
+          "resolvedType": "Float",
+          "type": "Wildcard"
+        },
+        {
+          "default": 0.0,
+          "direction": "input",
+          "id": 1004,
+          "name": "B",
+          "resolvedType": "Float",
+          "type": "Wildcard"
+        },
+        {
+          "direction": "output",
+          "id": 1005,
+          "name": "Result",
+          "resolvedType": "Float",
+          "type": "Wildcard"
+        }
+      ],
+      "position": {
+        "x": -420.0,
+        "y": -80.0
+      },
+      "properties": {},
+      "type": "Subtract",
+      "ueClass": "MaterialExpressionSubtract"
+    },
+    {
+      "category": "Math",
+      "id": 5,
+      "pins": [
+        {
+          "default": 1.0,
+          "direction": "input",
+          "id": 1006,
+          "name": "A",
+          "resolvedType": "Float",
+          "type": "Wildcard"
+        },
+        {
+          "default": 1.0,
+          "direction": "input",
+          "id": 1007,
+          "name": "B",
+          "resolvedType": "Float",
+          "type": "Wildcard"
+        },
+        {
+          "direction": "output",
+          "id": 1008,
+          "name": "Result",
+          "resolvedType": "Float",
+          "type": "Wildcard"
+        }
+      ],
+      "position": {
+        "x": -180.0,
+        "y": 20.0
+      },
+      "properties": {},
+      "type": "Multiply",
+      "ueClass": "MaterialExpressionMultiply"
+    },
+    {
+      "category": "Math",
+      "id": 6,
+      "pins": [
+        {
+          "default": 0.0,
+          "direction": "input",
+          "id": 1009,
+          "name": "A",
+          "resolvedType": "Float",
+          "type": "Wildcard"
+        },
+        {
+          "default": 0.0,
+          "direction": "input",
+          "id": 1010,
+          "name": "B",
+          "resolvedType": "Float",
+          "type": "Wildcard"
+        },
+        {
+          "direction": "output",
+          "id": 1011,
+          "name": "Result",
+          "resolvedType": "Float",
+          "type": "Wildcard"
+        }
+      ],
+      "position": {
+        "x": 60.0,
+        "y": 100.0
+      },
+      "properties": {},
+      "type": "Add",
+      "ueClass": "MaterialExpressionAdd"
+    },
+    {
+      "category": "Math",
+      "id": 7,
+      "pins": [
+        {
+          "default": 0.0,
+          "direction": "input",
+          "id": 1012,
+          "name": "Value",
+          "resolvedType": "Float",
+          "type": "Wildcard"
+        },
+        {
+          "default": 0.0,
+          "direction": "input",
+          "id": 1013,
+          "name": "Min",
+          "resolvedType": "Float",
+          "type": "Wildcard"
+        },
+        {
+          "default": 1.0,
+          "direction": "input",
+          "id": 1014,
+          "name": "Max",
+          "resolvedType": "Float",
+          "type": "Wildcard"
+        },
+        {
+          "direction": "output",
+          "id": 1015,
+          "name": "Result",
+          "resolvedType": "Float",
+          "type": "Wildcard"
+        }
+      ],
+      "position": {
+        "x": 300.0,
+        "y": 100.0
+      },
+      "properties": {},
+      "type": "Clamp",
+      "ueClass": "MaterialExpressionClamp"
+    },
+    {
+      "category": "Function",
+      "id": 8,
+      "pins": [
+        {
+          "default": 0.0,
+          "direction": "input",
+          "id": 1016,
+          "name": "Value",
+          "type": "Float"
+        }
+      ],
+      "position": {
+        "x": 560.0,
+        "y": 100.0
+      },
+      "properties": {
+        "outputName": "Result"
+      },
+      "type": "FunctionOutput",
+      "ueClass": "MaterialExpressionFunctionOutput"
+    }
+  ],
+  "schema": "materialforge.ue5.material",
+  "version": 1
+}

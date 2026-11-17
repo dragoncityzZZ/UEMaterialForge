@@ -1,0 +1,218 @@
+{
+  "engine": "Unreal Engine 5",
+  "generator": "MaterialForge 1.1.0",
+  "links": [
+    {
+      "fromNode": 1,
+      "fromPin": 1000,
+      "fromPinName": "Value",
+      "id": 100000,
+      "toNode": 3,
+      "toPin": 1002,
+      "toPinName": "A"
+    },
+    {
+      "fromNode": 2,
+      "fromPin": 1001,
+      "fromPinName": "Value",
+      "id": 100001,
+      "toNode": 3,
+      "toPin": 1003,
+      "toPinName": "B"
+    },
+    {
+      "fromNode": 3,
+      "fromPin": 1004,
+      "fromPinName": "Result",
+      "id": 100002,
+      "toNode": 4,
+      "toPin": 1005,
+      "toPinName": "Input"
+    },
+    {
+      "fromNode": 4,
+      "fromPin": 1006,
+      "fromPinName": "Result",
+      "id": 100003,
+      "toNode": 5,
+      "toPin": 1007,
+      "toPinName": "Input"
+    },
+    {
+      "fromNode": 5,
+      "fromPin": 1008,
+      "fromPinName": "Result",
+      "id": 100004,
+      "toNode": 6,
+      "toPin": 1009,
+      "toPinName": "Value"
+    }
+  ],
+  "material": {
+    "blendMode": "Opaque",
+    "domain": "Surface",
+    "name": "MF_Pulse",
+    "shadingModel": "DefaultLit",
+    "twoSided": false
+  },
+  "nodes": [
+    {
+      "category": "Function",
+      "id": 1,
+      "pins": [
+        {
+          "direction": "output",
+          "id": 1000,
+          "name": "Value",
+          "type": "Float"
+        }
+      ],
+      "position": {
+        "x": -640.0,
+        "y": 0.0
+      },
+      "properties": {
+        "inputName": "Time"
+      },
+      "type": "FunctionInput",
+      "ueClass": "MaterialExpressionFunctionInput"
+    },
+    {
+      "category": "Function",
+      "id": 2,
+      "pins": [
+        {
+          "direction": "output",
+          "id": 1001,
+          "name": "Value",
+          "type": "Float"
+        }
+      ],
+      "position": {
+        "x": -640.0,
+        "y": 160.0
+      },
+      "properties": {
+        "inputName": "Frequency"
+      },
+      "type": "FunctionInput",
+      "ueClass": "MaterialExpressionFunctionInput"
+    },
+    {
+      "category": "Math",
+      "id": 3,
+      "pins": [
+        {
+          "default": 1.0,
+          "direction": "input",
+          "id": 1002,
+          "name": "A",
+          "resolvedType": "Float",
+          "type": "Wildcard"
+        },
+        {
+          "default": 1.0,
+          "direction": "input",
+          "id": 1003,
+          "name": "B",
+          "resolvedType": "Float",
+          "type": "Wildcard"
+        },
+        {
+          "direction": "output",
+          "id": 1004,
+          "name": "Result",
+          "resolvedType": "Float",
+          "type": "Wildcard"
+        }
+      ],
+      "position": {
+        "x": -340.0,
+        "y": 60.0
+      },
+      "properties": {},
+      "type": "Multiply",
+      "ueClass": "MaterialExpressionMultiply"
+    },
+    {
+      "category": "Math",
+      "id": 4,
+      "pins": [
+        {
+          "default": 0.0,
+          "direction": "input",
+          "id": 1005,
+          "name": "Input",
+          "resolvedType": "Float",
+          "type": "Wildcard"
+        },
+        {
+          "direction": "output",
+          "id": 1006,
+          "name": "Result",
+          "resolvedType": "Float",
+          "type": "Wildcard"
+        }
+      ],
+      "position": {
+        "x": -80.0,
+        "y": 60.0
+      },
+      "properties": {},
+      "type": "Sine",
+      "ueClass": "MaterialExpressionSine"
+    },
+    {
+      "category": "Math",
+      "id": 5,
+      "pins": [
+        {
+          "default": 0.0,
+          "direction": "input",
+          "id": 1007,
+          "name": "Input",
+          "resolvedType": "Float",
+          "type": "Wildcard"
+        },
+        {
+          "direction": "output",
+          "id": 1008,
+          "name": "Result",
+          "resolvedType": "Float",
+          "type": "Wildcard"
+        }
+      ],
+      "position": {
+        "x": 160.0,
+        "y": 60.0
+      },
+      "properties": {},
+      "type": "Abs",
+      "ueClass": "MaterialExpressionAbs"
+    },
+    {
+      "category": "Function",
+      "id": 6,
+      "pins": [
+        {
+          "default": 0.0,
+          "direction": "input",
+          "id": 1009,
+          "name": "Value",
+          "type": "Float"
+        }
+      ],
+      "position": {
+        "x": 400.0,
+        "y": 60.0
+      },
+      "properties": {
+        "outputName": "Result"
+      },
+      "type": "FunctionOutput",
+      "ueClass": "MaterialExpressionFunctionOutput"
+    }
+  ],
+  "schema": "materialforge.ue5.material",
+  "version": 1
+}

@@ -1,0 +1,57 @@
+﻿id,asset,category,use,size,format,color_space,channels,tileable,batch,status,note
+1,T_White,常量,BaseColor/Emissive 占位,8x8,PNG,linear,RGB,是,P0,done,存 255；不用 1x1
+2,T_Black,常量,遮罩全关/自发光零,8x8,PNG,linear,RGB,是,P0,done,
+3,T_MidGray,常量,粗糙度/金属度 0.5,8x8,PNG,linear,RGB,是,P0,done,存 128 + srgb=false = 0.502 线性
+4,T_FlatNormal,常量,Normal 输入默认,8x8,PNG,linear,RGB,是,P0,done,存 128/128/255
+5,T_Checker,检查器,UV 检查与 TextureSample 回退,1024x1024,PNG,sRGB,RGB,是,P0,done,中性灰 8x8 格：#3A3A3A / #C8C8C8
+6,T_CheckerSmall,检查器,mip 与摩尔纹检查,1024x1024,PNG,sRGB,RGB,是,P0,done,16x16 格
+7,T_UVChecker,检查器,方向/翻转判断,1024x1024,PNG,sRGB,RGB,是,P0,done,格方向色 + +U/+V 角标；左上角挖空
+8,T_Grid,检查器,对齐参考,1024x1024,PNG,sRGB,RGB,是,P0,done,1/16 细线 + 1/4 主线
+9,T_GradientV,渐变,竖直遮罩,1024x16,PNG,sRGB,RGB,是,P0,done,t=v；写入做 sRGB 编码
+10,T_GradientRadial,渐变,径向衰减,1024x1024,PNG,sRGB,RGB,否,P0,done,wrap=clamp
+11,T_NoiseWhite,噪声,白噪声参考,512x512,PNG,linear,RGB,是,P0,done,固定 seed
+12,T_NoisePerlin,噪声,单层柏林,512x512,PNG,linear,RGB,是,P0,done,周期格 N=8
+13,T_NoiseFBM,噪声,5 层 fBm,512x512,PNG,linear,RGB,是,P0,done,起始频率 4 / lac 2 / gain 0.5
+14,T_MaskCircle,遮罩,圆形软边,512x512,PNG,linear,RGB,否,P0,done,r=0.8 + 2px 软边
+15,T_NoiseValue,噪声,value noise,512x512,PNG,linear,RGB,是,P1,done,quintic 插值
+16,T_NoiseWorley,噪声,Worley F1,512x512,PNG,linear,RGB,是,P1,done,8x8 抖动格 wrap 取邻
+17,T_NoiseCellular,噪声,细胞打包 F1/hash/edge/id,512x512,PNG,linear,RGBA,是,P1,done,R=F1 G=hash B=F2-F1 A=ID
+18,T_NoiseTurbulence,噪声,abs(fBm),512x512,PNG,linear,RGB,是,P1,done,
+19,T_NoiseRidged,噪声,ridged multifractal,512x512,PNG,linear,RGB,是,P1,done,(1-|n|)^2 累加
+20,T_NoiseCurl,场,curl 方向场,512x512,PNG,linear,RGBA,是,P1,done,RG=0.5+0.5*normalize(curl) B=强度
+21,T_NoiseBlue,噪声,蓝噪声抖动,256x256,PNG,linear,RGB,否,P1,done,void-and-cluster 环形距离
+22,T_NoiseGrain,噪声,胶片颗粒,256x256,PNG,linear,RGB,是,P1,done,sigma 0.06 + 行相关
+23,T_NoiseScratch,噪声,划痕遮罩,1024x1024,PNG,linear,RGB,边缘连续,P1,done,线段跨边界 wrap 复制
+24,T_StripesV,图案,竖条纹软边,1024x1024,PNG,linear,RGB,是,P1,done,8 条 smoothstep
+25,T_StripesH,图案,横条纹,1024x1024,PNG,linear,RGB,是,P1,done,
+26,T_StripesD45,图案,45 度斜条纹,1024x1024,PNG,linear,RGB,是,P1,done,frac((u+v)*8)
+27,T_Dots,图案,圆点阵列,1024x1024,PNG,linear,RGB,是,P1,done,半径 0.35 格
+28,T_HexGrid,图案,六边形网格,1024x1024,PNG,linear,RGB,是,P1,done,8 列 7 行，六边形 SDF；列数取偶数才能跨接缝对齐
+29,T_Brick,图案,砖块打包,1024x1024,PNG,sRGB,RGB,是,P1,done,8 行 4 列错缝，砖色随机 ±20%，灰缝 6px
+30,T_Tiles,图案,方砖 + 倒角,1024x1024,PNG,sRGB,RGB,是,P1,done,4x4 方砖，圆角 12px 倒角，白瓷砖 + 灰缝
+31,T_Truchet,图案,Truchet 拼接,1024x1024,PNG,linear,RGB,是,P1,done,8x8 格 hash 二选一
+32,T_Weave,图案,斜纹织物,1024x1024,PNG,linear,RGB,是,P1,done,(i+j) mod 4 决定压/浮
+33,T_WaterRipples,水,三频水波高度,1024x1024,PNG,linear,RGB,是,P2,done,灰度中频段水波；torus 距离保证平铺，法线由它派生
+34,T_WaterNormal,水,水波法线,1024x1024,PNG,linear,RGB,是,P2,done,由 33 的 R 求导；绿朝上
+35,T_WaterCaustics,水,焦散,1024x1024,PNG,linear,RGB,是,P2,done,(F2-F1) ridge
+36,T_WaterFlow,水,流向场,512x512,PNG,linear,RGBA,是,P2,done,curl 基底 + 15% 向心
+37,T_WaterFoam,水,泡沫遮罩,1024x1024,PNG,linear,RGBA,是,P2,done,fBm 团簇 + worley 气泡边，沿 v 方向 3 倍拉伸
+38,T_WaterWaves,水,大尺度波浪,1024x1024,PNG,linear,RGB,是,P2,done,4 方向整数频率正弦
+39,T_Wood,自然,年轮木纹,1024x1024,PNG,sRGB,RGB,是,P2,done,r*f + fbm 扭曲
+40,T_Marble,自然,大理石,1024x1024,PNG,sRGB,RGB,是,P2,done,sin(u*3 + 2.2*turb)
+41,T_Rust,自然,锈斑遮罩 + 色版,1024x1024,PNG,sRGB,RGB,是,P2,done,灰金属底 + 橙褐锈斑，可平铺
+42,T_Dirt,自然,污渍灰尘,1024x1024,PNG,linear,RGB,是,P2,done,低对比 + 大格 worley
+43,T_Cloud,自然,云 alpha,1024x1024,PNG,sRGB,RGBA,是,P2,done,6 层 fBm 软阈值
+44,T_Smoke,自然,烟 alpha,512x512,PNG,sRGB,RGBA,否,P2,done,v 方向压缩 3 倍
+45,T_Fire,自然,火焰,512x512,PNG,sRGB,RGBA,否,P2,done,v 拉伸 4 倍 + 高度衰减
+46,T_Sand,自然,沙粒与沙丘,1024x1024,PNG,sRGB,RGB,是,P2,done,细颗粒 + 3 方向条纹
+47,T_Scales,自然,鳞片,1024x1024,PNG,linear,RGB,是,P2,done,隔行横移半格
+48,T_Energy,特效,闪电能量,512x512,PNG,linear,RGB,否,P2,done,随机游走 + 分叉 + 两级辉光
+49,T_StarField,特效,星空点阵,1024x1024,PNG,linear,RGB,是,P2,done,3600 点，幂律亮度，跨边界 wrap
+50,T_Scanlines,特效,扫描线,512x512,PNG,linear,RGB,是,P2,done,N=64 整数周期
+51,T_DefaultEquirect,环境,预览球默认 HDRI,1024x512,HDR,linear,RGB float,否,P2,done,Radiance .hdr；峰值约 4.0
+52,T_BrickMask,图案,通道包：R=砖面倒角高度 G=每砖 ID B=遮盖 A=灰缝,1024x1024,PNG,linear,RGBA,是,P1,done,与 T_Brick 同源，用于每砖随机偏移
+53,T_TilesMask,图案,通道包：R=砖面 G=每瓦 ID B=倒角 A=灰缝,1024x1024,PNG,linear,RGBA,是,P1,done,与 T_Tiles 同源
+54,T_RustMask,自然,通道包：R=锈量 G=裸露金属 B=坑洞 A=1,1024x1024,PNG,linear,RGBA,是,P2,done,与 T_Rust 同源
+55,T_ScalesMask,自然,通道包：R=鳞壳 G=每片 ID B=边缘高光 A=1,1024x1024,PNG,linear,RGBA,是,P2,done,与 T_Scales 同源
+56,T_ColorChecker10x10,检查器,彩色编号棋盘 A1..J10，1:1,2000x2000,PNG,sRGB,RGB,否,P0,done,10×10，A1 在左上角，行号向下递增

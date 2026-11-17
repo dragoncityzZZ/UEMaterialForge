@@ -1,0 +1,13 @@
+build/
+build-*/
+dist/
+.materialforge/
+.github_token
+.cache/
+.vs/
+out/
+*.user
+*.suo
+CMakeUserPresets.json
+imgui.ini
+*.log

@@ -1,0 +1,26 @@
+{
+  "created": "2026-10-30T21:00:00",
+  "folderColors": {},
+  "lastOpened": "2026-11-17T22:04:48",
+  "mainMaterial": "materials/M_HoloCircuit.json",
+  "name": "Hologram Demo",
+  "resources": [
+    {
+      "kind": "texture",
+      "path": "assets/textures/T_HoloGrid.png",
+      "required": true
+    },
+    {
+      "kind": "model",
+      "path": "assets/models/PreviewCube.obj",
+      "required": true
+    },
+    {
+      "kind": "text",
+      "path": "references/notes.txt",
+      "required": true
+    }
+  ],
+  "schema": "materialforge.project",
+  "version": 1
+}

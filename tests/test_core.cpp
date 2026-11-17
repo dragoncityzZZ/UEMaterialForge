@@ -1097,9 +1097,15 @@ void TestSpecialMaterialOutputs() {
     const NodeDefinition* water = registry.Find("SingleLayerWaterMaterialOutput");
     const NodeDefinition* thin = registry.Find("ThinTranslucentMaterialOutput");
     const NodeDefinition* clearCoat = registry.Find("ClearCoatNormalCustomOutput");
+    const NodeDefinition* panner = registry.Find("Panner");
+    const NodeDefinition* rotator = registry.Find("Rotator");
+    const NodeDefinition* fresnel = registry.Find("Fresnel");
     CHECK_MSG(water != nullptr, "SingleLayerWaterMaterialOutput is missing.");
     CHECK_MSG(thin != nullptr, "ThinTranslucentMaterialOutput is missing.");
     CHECK_MSG(clearCoat != nullptr, "ClearCoatNormalCustomOutput is missing.");
+    CHECK_MSG(panner != nullptr, "Panner is missing.");
+    CHECK_MSG(rotator != nullptr, "Rotator is missing.");
+    CHECK_MSG(fresnel != nullptr, "Fresnel is missing.");
     if (water) {
         CHECK(water->inputs.size() == 4u);
         CHECK(water->ueClass == "MaterialExpressionSingleLayerWaterMaterialOutput");
@@ -1113,6 +1119,55 @@ void TestSpecialMaterialOutputs() {
         CHECK(clearCoat->inputs.size() == 1u);
         CHECK(clearCoat->inputs[0].name == "Clear Coat Normal");
     }
+    const auto hasInput = [](const NodeDefinition& definition, const std::string& name) {
+        return std::any_of(definition.inputs.begin(), definition.inputs.end(),
+                           [&](const PinDefinition& pin) { return pin.name == name; });
+    };
+    if (panner) {
+        CHECK(panner->inputs.size() == 4u);
+        CHECK(hasInput(*panner, "Seed"));
+    }
+    if (rotator) {
+        CHECK(hasInput(*rotator, "Time"));
+        CHECK(hasInput(*rotator, "Center"));
+        CHECK(hasInput(*rotator, "Speed"));
+    }
+    if (fresnel) {
+        CHECK(hasInput(*fresnel, "Normal"));
+        CHECK(hasInput(*fresnel, "Exponent"));
+    }
+
+    MaterialGraph graph;
+    std::string error;
+    CHECK(graph.AddNodeByType("MaterialOutput", Vec2(400.0f, 0.0f), &error) != nullptr);
+    CHECK(graph.AddNodeByType("SingleLayerWaterMaterialOutput", Vec2(0.0f, 0.0f),
+                              &error) != nullptr);
+    const GeneratedShader shader = GlslGenerator().Generate(graph);
+    CHECK_MSG(shader.success, "Single-layer water shader generation failed: " +
+                                  shader.diagnostic);
+    CHECK(shader.fragmentSource.find("Single Layer Water approximation") !=
+          std::string::npos);
+}
+
+void TestTextureSampleDirectTexture() {
+    MaterialGraph graph;
+    std::string error;
+    Node* sample = graph.AddNodeByType("TextureSample", Vec2(0.0f, 0.0f), &error);
+    Node* output = graph.AddNodeByType("MaterialOutput", Vec2(400.0f, 0.0f), &error);
+    CHECK(sample != nullptr);
+    CHECK(output != nullptr);
+    if (!sample || !output) return;
+    sample->properties["texture"] =
+        PropertyValue::AssetPathValue("assets/textures/T_Checker.png");
+    CHECK(graph.Connect(sample->FindOutput("RGB")->id,
+                        output->FindInput("Base Color")->id, &error) != nullptr);
+    CHECK(graph.Nodes().size() == 2u);
+    const GeneratedShader shader = GlslGenerator().Generate(graph);
+    CHECK_MSG(shader.success, "Direct TextureSample generation failed: " + shader.diagnostic);
+    CHECK(shader.textures.size() == 1u);
+    if (!shader.textures.empty()) {
+        CHECK(shader.textures.front().assetPath.find("T_Checker.png") != std::string::npos);
+    }
 }
 
 int main() {
@@ -1122,6 +1177,7 @@ int main() {
     TestConnectionRulesAndCycles();
     TestAllNodeTypesCompile();
     TestSpecialMaterialOutputs();
+    TestTextureSampleDirectTexture();
     TestMissingOutputFailure();
     TestFunctionGraphCopyAndSerialization();
     TestComponentMaskTypes();

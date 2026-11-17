@@ -14,7 +14,7 @@
 
 - 开源仓库：[dragoncityzZZ/dgndx](https://github.com/dragoncityzZZ/dgndx)
 - 下载安装包：[Releases](https://github.com/dragoncityzZZ/dgndx/releases/latest)
-- 当前版本：**2.6.2** · Windows x64 · 中文 / English
+- 当前版本：**2.6.3** · Windows x64 · 中文 / English
 - 主要技术：C++17、Dear ImGui、imgui-node-editor、OpenGL / Vulkan / DX12
 
 ## 截图
@@ -53,8 +53,9 @@
 - **添加包** 把内置纹理包（常量、检查器、渐变、噪声、图案、水、自然、特效等）
   复制到当前工程的 `textures/` 并登记到 `.mfproject`；内置资产打包在
   `assets/textures/`。
-- TextureSample 的 Texture 输入支持从内容浏览器直接拖入；画布引脚、检查器
-  引脚表和旁边的 `...` 按钮都能打开纹理选择器。
+- TextureSample 的 Texture 输入支持从内容浏览器直接拖入，直接写入该节点的
+  `texture` 属性，不会额外生成 TextureObject；画布引脚、检查器引脚表和旁边的
+  `...` 按钮都能打开纹理选择器。
 - 纹理选择器只列出当前工程已有纹理；没有添加包时不会凭空显示内置资产。
 - **双击纹理**打开纹理查看器，支持缩放、平移、透明棋盘格以及
   RGBA / RGB / R / G / B / A 通道查看。
@@ -69,6 +70,9 @@
 - 自定义预览网格、HDRI 环境、灯光强度、曝光、地面高度。
 - **节点实时预览**：右键节点选择“实时预览”，或右键输出引脚选择“预览此输出”，
   材质球显示该节点及其上游子图的运算结果，修改上游节点后自动刷新。
+- `SingleLayerWaterMaterialOutput` 在预览中会以 Base Color 作为水下场景颜色，
+  结合 Scattering / Absorption / PhaseG 做单层水近似，并叠加程序化悬浮杂质；
+  水底纹理只要接到 Base Color 就会透过水体显示。
 - 预览标题旁的 **实时 / Live** 开关：关闭后保持静态画面，只有旋转/缩放/重置
   材质球或修改材质、预览设置时才重新渲染，降低持续 GPU 占用。
 
@@ -123,7 +127,7 @@
 安装包生成在：
 
 ```text
-dist/installer/MaterialForge-2.6.2-Setup.exe
+dist/installer/MaterialForge-2.6.3-Setup.exe
 ```
 
 运行安装程序后从开始菜单或桌面快捷方式启动。安装包包含程序、默认纹理、
@@ -148,7 +152,7 @@ cmake --build build
 > “Windows 已保护你的电脑 / 发布者未知”。这是 Windows 对下载文件的
 > SmartScreen 检查，不是安装包缺少卸载程序。要让 SmartScreen 显示发布者，
 > 需要用受信任的代码签名证书对 `MaterialForge.exe` 和
-> `MaterialForge-2.6.2-Setup.exe` 签名。构建脚本支持 PFX 或证书指纹：
+> `MaterialForge-2.6.3-Setup.exe` 签名。构建脚本支持 PFX 或证书指纹：
 >
 > ```powershell
 > $env:MATERIALFORGE_SIGN_PFX = "C:\path\to\codesign.pfx"
@@ -170,7 +174,7 @@ cmake --build build
 ### 便携版
 
 ```text
-dist/MaterialForge-2.6.2-win64-portable/
+dist/MaterialForge-2.6.3-win64-portable/
 ├─ MaterialForge.exe
 ├─ assets/          # 默认纹理、模型、manifest
 ├─ examples/        # 示例材质图和工程
@@ -188,11 +192,11 @@ Windows GUI 子系统，不依赖额外 VC++ Redistributable。
 
 ```powershell
 # 打开示例工程
-.\dist\MaterialForge-2.6.2-win64-portable\MaterialForge.exe `
+.\dist\MaterialForge-2.6.3-win64-portable\MaterialForge.exe `
   .\examples\projects\hologram_demo\HologramDemo.mfproject
 
 # 打开单个材质
-.\dist\MaterialForge-2.6.2-win64-portable\MaterialForge.exe `
+.\dist\MaterialForge-2.6.3-win64-portable\MaterialForge.exe `
   --open .\examples\graphs\hologram_circuit.json
 ```
 
@@ -236,7 +240,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\build-installer.ps1
 & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" .\installer\MaterialForge.iss
 ```
 
-输出：`dist/installer/MaterialForge-2.6.2-Setup.exe`。
+输出：`dist/installer/MaterialForge-2.6.3-Setup.exe`。
 
 ---
 

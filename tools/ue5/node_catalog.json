@@ -1660,6 +1660,10 @@
         {
           "name": "Position",
           "type": "Vector3"
+        },
+        {
+          "name": "Filter Width",
+          "type": "Float"
         }
       ],
       "isFunctionOnly": false,
@@ -1851,7 +1855,20 @@
       "description": "View-angle fresnel term. This preview uses the geometric normal.",
       "displayName": "Fresnel",
       "hiddenInLibrary": false,
-      "inputs": [],
+      "inputs": [
+        {
+          "name": "Normal",
+          "type": "Vector3"
+        },
+        {
+          "name": "Exponent",
+          "type": "Float"
+        },
+        {
+          "name": "Base Reflect Fraction",
+          "type": "Float"
+        }
+      ],
       "isFunctionOnly": false,
       "isMaterialOutput": false,
       "outputs": [
@@ -1917,6 +1934,14 @@
         {
           "name": "Time",
           "type": "Float"
+        },
+        {
+          "name": "Speed",
+          "type": "Vector2"
+        },
+        {
+          "name": "Seed",
+          "type": "Float"
         }
       ],
       "isFunctionOnly": false,
@@ -1949,6 +1974,18 @@
         {
           "name": "Coordinate",
           "type": "Vector2"
+        },
+        {
+          "name": "Time",
+          "type": "Float"
+        },
+        {
+          "name": "Center",
+          "type": "Vector2"
+        },
+        {
+          "name": "Speed",
+          "type": "Float"
         }
       ],
       "isFunctionOnly": false,
@@ -2506,7 +2543,13 @@
           "type": "Float"
         }
       ],
-      "properties": [],
+      "properties": [
+        {
+          "default": "",
+          "key": "texture",
+          "label": "Texture"
+        }
+      ],
       "type": "TextureSample",
       "ueClass": "MaterialExpressionTextureSample"
     },

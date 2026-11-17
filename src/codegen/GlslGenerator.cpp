@@ -506,6 +506,49 @@ public:
             m_Body << "    mf_color += mf_clearCoat * pow(1.0 - mf_NoV, mf_coatPower) * vec3(0.20, 0.22, 0.24);\n";
         }
 
+        // A SingleLayerWaterMaterialOutput is an additional output expression
+        // rather than a replacement for MaterialOutput. Approximate the visible
+        // single-layer water response here: the regular base color acts as the
+        // scene behind the surface, scatter/absorption tint the volume, and a
+        // small procedural term breaks up the water with suspended impurities.
+        const Node* waterOutput = nullptr;
+        for (const auto& graphNode : m_Graph.Nodes()) {
+            if (graphNode->type == "SingleLayerWaterMaterialOutput") {
+                waterOutput = graphNode.get();
+                break;
+            }
+        }
+        if (waterOutput) {
+            const Expr waterScatter =
+                Coerce(ReadInput(*waterOutput, "Scattering Coefficients"), PinType::Vector3,
+                       "SingleLayerWater.Scattering");
+            const Expr waterAbsorb =
+                Coerce(ReadInput(*waterOutput, "Absorption Coefficients"), PinType::Vector3,
+                       "SingleLayerWater.Absorption");
+            const Expr waterPhase =
+                Coerce(ReadInput(*waterOutput, "PhaseG"), PinType::Float,
+                       "SingleLayerWater.PhaseG");
+            const Expr waterBehind =
+                Coerce(ReadInput(*waterOutput, "Color Scale Behind Water"), PinType::Vector3,
+                       "SingleLayerWater.ColorScale");
+            m_Body << "\n    // ---- Single Layer Water approximation ----\n";
+            m_Body << "    vec3 mf_waterScatter = max(" << waterScatter.code << ", vec3(0.0));\n";
+            m_Body << "    vec3 mf_waterAbsorb = max(" << waterAbsorb.code << ", vec3(0.001));\n";
+            m_Body << "    float mf_waterPhase = mix(0.5, 2.5, clamp(" << waterPhase.code
+                   << " * 0.5 + 0.5, 0.0, 1.0));\n";
+            m_Body << "    vec3 mf_waterBehind = mf_baseColor * max(" << waterBehind.code
+                   << ", vec3(0.0));\n";
+            m_Body << "    float mf_waterDepth = clamp(0.35 + 0.65 * (1.0 - clamp(dot(mf_N, mf_V), 0.0, 1.0)), 0.0, 1.0);\n";
+            m_Body << "    vec3 mf_waterTransmittance = exp(-mf_waterAbsorb * mf_waterDepth * 80.0);\n";
+            m_Body << "    vec3 mf_waterInscatter = mf_waterScatter * (1.0 - mf_waterTransmittance) * mf_waterPhase;\n";
+            m_Body << "    float mf_waterImpurity = mf_valueNoise(vWorldPos * 9.0 + vec3(3.7, 1.9, 5.3));\n";
+            m_Body << "    mf_waterInscatter += mf_waterScatter * (mf_waterImpurity - 0.5) * 0.16;\n";
+            m_Body << "    float mf_waterNoV = clamp(dot(mf_N, mf_V), 0.0, 1.0);\n";
+            m_Body << "    float mf_waterSpec = pow(1.0 - mf_waterNoV, 3.0) * (0.25 + mf_specular * 0.75);\n";
+            m_Body << "    mf_color = mf_waterBehind * mf_waterTransmittance + mf_waterInscatter";
+            m_Body << " + vec3(mf_waterSpec) * vec3(0.55, 0.68, 0.78) + mf_emissive;\n";
+        }
+
         m_Body << "\n    // Filmic shoulder + gamma. The target framebuffer is a plain RGBA8 texture,\n"
                   "    // so the tone mapping is applied here rather than by the OpenGL pipeline.\n";
         m_Body << "    mf_color *= 1.18 * " << m_Lighting.exposure << ";\n";
@@ -1143,10 +1186,13 @@ private:
 
         if (type == "Noise") {
             Expr position = Coerce(ReadInput(node, "Position"), PinType::Vector3, "Noise.Position");
+            Expr filterWidth = Coerce(ReadInput(node, "Filter Width", Expr{"0.0", PinType::Float}),
+                                      PinType::Float, "Noise.FilterWidth");
             const float scale = ReadFloatProperty(node, "scale", 1.0f);
             return SingleOutput(node, EmitAssignment(
                 node, PinType::Float,
-                "mf_valueNoise(" + position.code + " * " + FloatLiteral(scale) + ")"));
+                "mf_valueNoise(" + position.code + " * " + FloatLiteral(scale) +
+                    " + vec3(" + filterWidth.code + " * 0.01))"));
         }
 
         if (type == "DotProduct") {
@@ -1192,12 +1238,23 @@ private:
         }
 
         if (type == "Fresnel") {
-            const float exponent = ReadFloatProperty(node, "exponent", 5.0f);
-            const float baseReflect = ReadFloatProperty(node, "baseReflectFraction", 0.04f);
+            Expr normal = Coerce(ReadInput(node, "Normal", Expr{"mf_N", PinType::Vector3}),
+                                 PinType::Vector3, "Fresnel.Normal");
+            const float exponentProperty = ReadFloatProperty(node, "exponent", 5.0f);
+            const float baseReflectProperty =
+                ReadFloatProperty(node, "baseReflectFraction", 0.04f);
+            Expr exponent = Coerce(
+                ReadInput(node, "Exponent",
+                          Expr{FloatLiteral(exponentProperty), PinType::Float}),
+                PinType::Float, "Fresnel.Exponent");
+            Expr baseReflect = Coerce(
+                ReadInput(node, "Base Reflect Fraction",
+                          Expr{FloatLiteral(baseReflectProperty), PinType::Float}),
+                PinType::Float, "Fresnel.BaseReflectFraction");
             const std::string expression =
-                "(" + FloatLiteral(baseReflect) + " + (1.0 - " + FloatLiteral(baseReflect) +
-                ") * pow(1.0 - clamp(dot(mf_N, mf_V), 0.0, 1.0), max(" + FloatLiteral(exponent) +
-                ", 0.0001)))";
+                "(" + baseReflect.code + " + (1.0 - " + baseReflect.code +
+                ") * pow(1.0 - clamp(dot(" + normal.code + ", mf_V), 0.0, 1.0), max(" +
+                exponent.code + ", 0.0001)))";
             return SingleOutput(node, EmitAssignment(node, PinType::Float, expression));
         }
 
@@ -1215,26 +1272,45 @@ private:
                                      PinType::Vector2, "Panner.Coordinate");
             Expr time = Coerce(ReadInput(node, "Time", Expr{"uTime", PinType::Float}),
                                PinType::Float, "Panner.Time");
-            const Vec2 speed = ReadVec2Property(node, "speed", Vec2(0.05f, 0.02f));
+            const Vec2 propertySpeed = ReadVec2Property(node, "speed", Vec2(0.05f, 0.02f));
+            const std::string propertySpeedCode =
+                "vec2(" + FloatLiteral(propertySpeed.x) + ", " +
+                FloatLiteral(propertySpeed.y) + ")";
+            Expr speed = Coerce(ReadInput(node, "Speed",
+                                          Expr{propertySpeedCode, PinType::Vector2}),
+                                PinType::Vector2, "Panner.Speed");
+            Expr seed = Coerce(ReadInput(node, "Seed", Expr{"0.0", PinType::Float}),
+                               PinType::Float, "Panner.Seed");
             const std::string expression =
-                "(" + coordinate.code + " + " + time.code + " * vec2(" +
-                FloatLiteral(speed.x) + ", " + FloatLiteral(speed.y) + "))";
+                "(" + coordinate.code + " + (" + time.code + " + " + seed.code +
+                " * 3.0) * " + speed.code + " + " + seed.code +
+                " * vec2(13.17, 7.91))";
             return SingleOutput(node, EmitAssignment(node, PinType::Vector2, expression));
         }
 
         if (type == "Rotator") {
             Expr coordinate = Coerce(ReadInput(node, "Coordinate", Expr{"vUV", PinType::Vector2}),
                                      PinType::Vector2, "Rotator.Coordinate");
-            const Vec2 center = ReadVec2Property(node, "center", Vec2(0.5f, 0.5f));
-            const float speed = ReadFloatProperty(node, "speed", 0.1f);
+            Expr time = Coerce(ReadInput(node, "Time", Expr{"uTime", PinType::Float}),
+                               PinType::Float, "Rotator.Time");
+            const Vec2 propertyCenter = ReadVec2Property(node, "center", Vec2(0.5f, 0.5f));
+            const float propertySpeed = ReadFloatProperty(node, "speed", 0.1f);
+            const std::string centerCode =
+                "vec2(" + FloatLiteral(propertyCenter.x) + ", " +
+                FloatLiteral(propertyCenter.y) + ")";
+            Expr center = Coerce(ReadInput(node, "Center",
+                                           Expr{centerCode, PinType::Vector2}),
+                                 PinType::Vector2, "Rotator.Center");
+            Expr speed = Coerce(ReadInput(node, "Speed",
+                                          Expr{FloatLiteral(propertySpeed), PinType::Float}),
+                                PinType::Float, "Rotator.Speed");
             const std::string centerVar = VariableName(node, "_center");
             const std::string deltaVar = VariableName(node, "_delta");
             const std::string angleVar = VariableName(node, "_angle");
             m_Body << "    // " << type << " #" << node.id << "\n";
-            m_Body << "    vec2 " << centerVar << " = vec2(" << FloatLiteral(center.x) << ", "
-                   << FloatLiteral(center.y) << ");\n";
+            m_Body << "    vec2 " << centerVar << " = " << center.code << ";\n";
             m_Body << "    vec2 " << deltaVar << " = " << coordinate.code << " - " << centerVar << ";\n";
-            m_Body << "    float " << angleVar << " = uTime * " << FloatLiteral(speed) << ";\n";
+            m_Body << "    float " << angleVar << " = " << time.code << " * " << speed.code << ";\n";
             const std::string expression =
                 "vec2(cos(" + angleVar + ") * " + deltaVar + ".x - sin(" + angleVar + ") * " + deltaVar +
                 ".y, sin(" + angleVar + ") * " + deltaVar + ".x + cos(" + angleVar + ") * " + deltaVar +
@@ -1339,12 +1415,11 @@ private:
             Expr texture = ReadInput(node, "Texture", Expr{"uDefaultTexture", PinType::Texture});
             SamplerSettings samplerSettings = ReadSamplerSettings(node);
             const Pin* texturePin = node.FindInput("Texture");
-            if (type == "TextureSampleParameter2D" && texturePin &&
-                !m_Graph.IsPinConnected(texturePin->id)) {
+            if (texturePin && !m_Graph.IsPinConnected(texturePin->id)) {
                 const std::string texturePath = ReadStringProperty(node, "texture");
                 if (!texturePath.empty()) {
                     const std::string uniformName =
-                        "uTexture_" + m_UniformPrefix + "param" + std::to_string(node.id);
+                        "uTexture_" + m_UniformPrefix + "node" + std::to_string(node.id);
                     m_Textures.push_back(
                         {uniformName, node.id, texturePath, samplerSettings});
                     texture = {uniformName, PinType::Texture};

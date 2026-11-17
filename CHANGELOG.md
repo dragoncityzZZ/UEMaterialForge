@@ -1,5 +1,23 @@
 # Changelog
 
+## 2.6.3 — 2026-11-18
+
+### 新增
+
+- `SingleLayerWaterMaterialOutput` 现在参与预览着色：Base Color 作为水下场景颜色，
+  Scattering / Absorption / PhaseG 驱动水体透射和散射，并叠加程序化悬浮杂质；
+  接到 Base Color 的纹理可以透过水面显示。
+- TextureSample 新增直接 `texture` 属性；拖入纹理时直接设置该属性，不再生成
+  额外的 TextureObject 节点。TextureSampleParameter2D 同样直接使用属性。
+- Panner 增加 `Speed` 和 `Seed` 输入；Rotator 增加 `Time`、`Center`、`Speed`
+  输入；Fresnel 增加 `Normal`、`Exponent`、`Base Reflect Fraction` 输入；
+  Noise 增加 `Filter Width` 输入。
+
+### 工程
+
+- UE5 导入桥接支持 TextureSample 直接纹理属性和新增着色模型映射。
+- 更新节点参考与 catalog。版本更新为 2.6.3。
+
 ## 2.6.2 — 2026-11-18
 
 ### 新增

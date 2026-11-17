@@ -144,7 +144,7 @@ Material Instance（`.mfinstance`）保存 `parentMaterial` 和稀疏参数覆�
 | `ConstantBiasScale` | `MaterialExpressionConstantBiasScale` | Input (W), Bias (W), Scale (W) | Result: W | `Input * Scale + Bias`。 |
 | `RotateAboutAxis` | `MaterialExpressionRotateAboutAxis` | Position (Vector3), Axis (Vector3), Angle (Float) | Result: Vector3 | Rodrigues 旋转，Angle 单位为弧度。 |
 | `SphereMask` | `MaterialExpressionSphereMask` | A/B (Vector3), Radius (Float), Hardness (Float) | Result: Float | 距离场球体遮罩。 |
-| `Noise` | `MaterialExpressionNoise` | Position (Vector3) | Result: Float | 预览使用确定性的 3D value noise；属性 `scale`。 |
+| `Noise` | `MaterialExpressionNoise` | Position (Vector3), Filter Width (Float) | Result: Float | 预览使用确定性的 3D value noise；属性 `scale`，Filter Width 扩展采样范围。 |
 
 ### 插值 / 向量
 
@@ -161,7 +161,7 @@ Material Instance（`.mfinstance`）保存 `parentMaterial` 和稀疏参数覆�
 | Node type | UE class | Inputs / properties | Outputs | 说明 |
 |---|---|---|---|---|
 | `Desaturation` | `MaterialExpressionDesaturation` | Color (Vector3), Fraction (Float) | Result: Vector3 | 按亮度 `(0.3,0.59,0.11)` 插值。 |
-| `Fresnel` | `MaterialExpressionFresnel` | 属性 `exponent` Float, `baseReflectFraction` Float | Result: Float | UE 中 Exponent 是节点属性而不是输入引脚；预览使用几何法线近似。导入设置 `exponent` 和 `base_reflect_fraction`。 |
+| `Fresnel` | `MaterialExpressionFresnel` | Normal (Vector3), Exponent (Float), Base Reflect Fraction (Float)；属性 `exponent`、`baseReflectFraction` | Result: Float | 预览使用 Normal 输入或几何法线；未连接输入时使用属性值。 |
 | `StaticSwitchParameter` | `MaterialExpressionStaticSwitchParameter` | True (W), False (W); 属性 `value` Bool | Result: W | 编译期开关；预览按属性选择分支并导出为静态开关参数。 |
 | `TwoSidedSign` | `MaterialExpressionTwoSidedSign` | — | Sign: Float | 预览始终为 1。 |
 | `Reroute` | `MaterialExpressionReroute` | Input (W) | Output: W | 透传节点；用于整理连线，生成的是同类型局部变量。 |
@@ -172,8 +172,8 @@ Material Instance（`.mfinstance`）保存 `parentMaterial` 和稀疏参数覆�
 | Node type | UE class | Inputs | Outputs | Properties / 说明 |
 |---|---|---|---|---|
 | `TextureCoordinate` | `MaterialExpressionTextureCoordinate` | — | UV: Vector2 | `uTiling`, `vTiling`；预览为 `vUV * vec2(u, v)`。导入 `u_tiling` / `v_tiling`。 |
-| `Panner` | `MaterialExpressionPanner` | Coordinate (Vector2), Time (Float) | UV: Vector2 | 属性 `speed` Vector2；未连接 Time 时使用全局 `uTime`。导入 `speed_x` / `speed_y`。 |
-| `Rotator` | `MaterialExpressionRotator` | Coordinate (Vector2) | UV: Vector2 | 属性 `center` Vector2、`speed` Float；预览使用全局时间。导入 `center_x` / `center_y` / `speed`。 |
+| `Panner` | `MaterialExpressionPanner` | Coordinate (Vector2), Time (Float), Speed (Vector2), Seed (Float) | UV: Vector2 | 属性 `speed` Vector2；未连接 Time 时使用全局 `uTime`，Seed 偏移平铺图案。 |
+| `Rotator` | `MaterialExpressionRotator` | Coordinate (Vector2), Time (Float), Center (Vector2), Speed (Float) | UV: Vector2 | 属性 `center` Vector2、`speed` Float；未连接 Time 时使用全局时间。 |
 | `BumpOffset` | `MaterialExpressionBumpOffset` | Coordinate (Vector2), Height (Float), HeightRatio (Float), ReferencePlane (Float) | UV: Vector2 | 预览使用简单的 UV 视差近似。 |
 | `Time` | `MaterialExpressionTime` | — | Time: Float | 全局 `uTime`。 |
 | `WorldPosition` | `MaterialExpressionWorldPosition` | — | World Position: Vector3 | 像素世界坐标。 |
@@ -197,7 +197,7 @@ Material Instance（`.mfinstance`）保存 `parentMaterial` 和稀疏参数覆�
 | `Sampler` | `MaterialExpressionSampler` | — | Sampler: Sampler | 共享采样设置：`filter`、`addressU/V`、`srgb`、`mipBias`、`maxAnisotropy`、`textureGroup`。连接到 TextureSample 的 Sampler 输入时覆盖纹理自身设置。 |
 | `TextureObject` | `MaterialExpressionTextureObject` | — | Texture: Texture | `texture` AssetPath 以及 sampler 设置。预览加载图片并按 sRGB/filter/wrap 配置 GL 纹理；JSON 导入时解析成 TextureSample 的 `texture` 属性。 |
 | `TextureObjectParameter` | `MaterialExpressionTextureObjectParameter` | — | Texture: Texture | 命名纹理参数，属性 `parameterName` / `texture` 及 sampler 设置；导入为 TextureObjectParameter。 |
-| `TextureSample` | `MaterialExpressionTextureSample` | UVs (Vector2), Texture (Texture), Sampler (Sampler) | RGBA: Vector4, RGB: Vector3, R/G/B/A: Float | UVs 未连接时使用 `vUV`；Texture 未连接时使用 fallback 棋盘纹理。Sampler 连接时覆盖纹理采样设置。 |
+| `TextureSample` | `MaterialExpressionTextureSample` | UVs (Vector2), Texture (Texture), Sampler (Sampler); 属性 `texture` | RGBA: Vector4, RGB: Vector3, R/G/B/A: Float | UVs 未连接时使用 `vUV`；Texture 未连接时使用 `texture` 属性，未设置时回退棋盘纹理。拖入纹理直接写入 `texture`，不会额外创建 TextureObject。 |
 | `TextureSampleParameter2D` | `MaterialExpressionTextureSampleParameter2D` | UVs (Vector2), Texture (Texture), Sampler (Sampler); 属性 `parameterName` / `texture` + sampler 设置 | RGBA/RGB/R/G/B/A | 带参数名的纹理采样；Texture 未连接时使用 `texture` 属性，否则使用回退纹理。 |
 | `SceneTexture` | `MaterialExpressionSceneTexture` | UVs (Vector2); 属性 `sceneTextureId` String | Color: Vector4, Size: Vector2, InvSize: Vector2 | 仅提供节点定义和 Size/InvSize 输出；由于本版本不做场景联动，Color 使用 UV 渐变占位色，不读取实际场景。 |
 

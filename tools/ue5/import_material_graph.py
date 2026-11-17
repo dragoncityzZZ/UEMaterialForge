@@ -268,6 +268,9 @@ def apply_node_properties(expression: Any, node: dict[str, Any]) -> None:
         set_editor_property_safe(expression, "exponent", float(properties.get("exponent", 5.0)))
         set_editor_property_safe(expression, "base_reflect_fraction",
                                  float(properties.get("baseReflectFraction", 0.04)))
+    elif node_type == "TextureSampleParameter2D":
+        set_editor_property_safe(expression, "parameter_name",
+                                 unreal.Name(properties.get("parameterName", "Texture")))
     # Other expressions do not have MaterialForge-editable properties.
 
 
@@ -324,6 +327,9 @@ def find_texture_source(node_id: int, links: list[dict[str, Any]], nodes_by_id: 
             source = nodes_by_id.get(link.get("fromNode", -1))
             if source and source.get("type") == "TextureObject":
                 return str((source.get("properties") or {}).get("texture", ""))
+    node = nodes_by_id.get(node_id)
+    if node:
+        return str((node.get("properties") or {}).get("texture", ""))
     return ""
 
 
@@ -380,7 +386,7 @@ def build_import_plan(document: dict[str, Any], graph_path: Path,
     nodes_by_id = {int(node["id"]): node for node in nodes}
     texture_samples = {}
     for node in nodes:
-        if node.get("type") == "TextureSample":
+        if node.get("type") in ("TextureSample", "TextureSampleParameter2D"):
             source = find_texture_source(int(node["id"]), links, nodes_by_id)
             texture_samples[int(node["id"])] = source
 

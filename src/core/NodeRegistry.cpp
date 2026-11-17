@@ -652,7 +652,9 @@ NodeRegistry::NodeRegistry() {
         def.description = "Deterministic value noise from a 3D position.";
         def.ueClass = "MaterialExpressionNoise";
         def.inputs = {
-            In("Position", PinType::Vector3, PropertyValue::Vec3Value(0.0f, 0.0f, 0.0f))
+            In("Position", PinType::Vector3, PropertyValue::Vec3Value(0.0f, 0.0f, 0.0f)),
+            In("Filter Width", PinType::Float, PropertyValue::Float(0.0f),
+               "Broadens the sampled noise footprint; 0 keeps the sharp procedural noise.")
         };
         def.outputs = {Out("Result", PinType::Float)};
         def.properties = {PropFloat("scale", "Scale", 1.0f, 0.01f, true, 0.001f, 32.0f)};
@@ -753,6 +755,14 @@ NodeRegistry::NodeRegistry() {
         def.category = "Utility";
         def.description = "View-angle fresnel term. This preview uses the geometric normal.";
         def.ueClass = "MaterialExpressionFresnel";
+        def.inputs = {
+            In("Normal", PinType::Vector3, PropertyValue::Vec3Value(0.0f, 0.0f, 1.0f),
+               "Normal used for the view-angle calculation."),
+            In("Exponent", PinType::Float, PropertyValue::Float(5.0f),
+               "Fresnel falloff exponent override."),
+            In("Base Reflect Fraction", PinType::Float, PropertyValue::Float(0.04f),
+               "Reflection fraction at a perpendicular view.")
+        };
         def.outputs = {Out("Result", PinType::Float)};
         def.properties = {
             PropFloat("exponent", "Exponent", 5.0f, 0.05f, true, 0.0f, 16.0f,
@@ -790,7 +800,11 @@ NodeRegistry::NodeRegistry() {
         def.inputs = {
             In("Coordinate", PinType::Vector2, PropertyValue::Vec2Value(0.0f, 0.0f)),
             In("Time", PinType::Float, PropertyValue::Float(0.0f),
-               "Leave unconnected to use the global material time uniform.")
+               "Leave unconnected to use the global material time uniform."),
+            In("Speed", PinType::Vector2, PropertyValue::Vec2Value(0.05f, 0.02f),
+               "UV scroll speed override. The property below is used when this pin is unconnected."),
+            In("Seed", PinType::Float, PropertyValue::Float(0.0f),
+               "Offsets the scroll pattern; useful for breaking up repeating water/flow textures.")
         };
         def.outputs = {Out("UV", PinType::Vector2)};
         def.properties = {PropVec2("speed", "Speed", Vec2(0.05f, 0.02f), 0.001f)};
@@ -805,7 +819,13 @@ NodeRegistry::NodeRegistry() {
         def.ueClass = "MaterialExpressionRotator";
         def.inputs = {
             In("Coordinate", PinType::Vector2, PropertyValue::Vec2Value(0.0f, 0.0f),
-               "UVs to rotate. Defaults to mesh UVs.")
+               "UVs to rotate. Defaults to mesh UVs."),
+            In("Time", PinType::Float, PropertyValue::Float(0.0f),
+               "Leave unconnected to use the global material time uniform."),
+            In("Center", PinType::Vector2, PropertyValue::Vec2Value(0.5f, 0.5f),
+               "Rotation center override."),
+            In("Speed", PinType::Float, PropertyValue::Float(0.1f),
+               "Rotation speed override in radians per second.")
         };
         def.outputs = {Out("UV", PinType::Vector2)};
         def.properties = {
@@ -1048,6 +1068,10 @@ NodeRegistry::NodeRegistry() {
             Out("G", PinType::Float),
             Out("B", PinType::Float),
             Out("A", PinType::Float)
+        };
+        def.properties = {
+            PropAsset("texture", "Texture", "",
+                      "Direct texture asset. Used when the Texture input is not connected.")
         };
         Register(std::move(def));
     }

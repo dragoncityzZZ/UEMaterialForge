@@ -824,6 +824,8 @@ const std::unordered_map<std::string_view, const char*> kChinese = {
     {"Single Layer Water Material Output", "单层水材质输出"},
     {"Thin Translucent Material Output", "薄半透明材质输出"},
     {"Clear Coat Normal Custom Output", "清漆法线自定义输出"},
+    {"Copy Error", "复制错误"},
+    {"Copy this diagnostic to the clipboard for the plugin author.", "复制诊断信息给插件作者。"},
     {"SingleLayerWater", "单层水"},
     {"ThinTranslucent", "薄半透明"},
     {"This node has no numeric output to preview.", "该节点没有可预览的数值输出。"},

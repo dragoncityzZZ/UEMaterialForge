@@ -26,6 +26,7 @@ struct PluginInfo {
     bool enabled = true;
     bool loaded = false;
     std::string error;
+    std::string warning;
     std::vector<std::string> commands;
 };
 
@@ -63,6 +64,7 @@ private:
     struct HostContext {
         PluginManager* manager = nullptr;
         std::string pluginId;
+        std::string lastError;
     };
 
     struct LoadedPlugin {

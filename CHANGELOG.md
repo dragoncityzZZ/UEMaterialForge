@@ -1,5 +1,23 @@
 # Changelog
 
+## 2.6.5 — 2026-11-19
+
+### 插件管理器
+
+- 插件加载错误改为详细诊断：
+  - Windows `LoadLibraryW` 错误码、系统消息和 DLL 架构（x86 / x64 / ARM64）。
+  - 缺少依赖 DLL / VC++ 运行库、错误架构、缺少导出函数的明确提示。
+  - `plugin.json` 缺失、JSON 语法错误、schema、schemaVersion、id、entry 字段错误。
+  - `MaterialForgePluginInit` 返回 0 时显示插件通过 `api->log(host, 2, ...)` 写入的原因；
+    没有日志时说明常见原因。
+- Plugin Manager 中的错误改为换行显示，并增加 **复制错误** 按钮；加载成功但没有命令行/卸载导出时显示警告。
+- 生成的插件模板和文档完全独立于主程序：
+  - 自包含 ABI 头文件和完整函数签名。
+  - CMake x64 + 静态 MSVC 运行库配置。
+  - 完整构建、安装、manifest、生命周期和故障排查说明。
+  - 初始化失败时模板会自动记录具体错误。
+- `runtime_version` 使用主程序实际版本。
+
 ## 2.6.4 — 2026-11-18
 
 ### 安装包运行时

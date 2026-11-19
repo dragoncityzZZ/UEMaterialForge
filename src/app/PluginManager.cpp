@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <cctype>
 #include <fstream>
+#include <sstream>
 #include <system_error>
 
 #if defined(_WIN32)
@@ -23,7 +24,10 @@ namespace mf {
 namespace {
 
 constexpr const char* kPluginSchema = "materialforge.plugin";
-constexpr const char* kRuntimeVersion = "2.5.0";
+#ifndef MF_VERSION_STRING
+#define MF_VERSION_STRING "2.6.5"
+#endif
+constexpr const char* kRuntimeVersion = MF_VERSION_STRING;
 
 std::string ToLower(std::string value) {
     std::transform(value.begin(), value.end(), value.begin(),
@@ -35,7 +39,93 @@ std::string ManifestPathName() {
     return "plugin.json";
 }
 
+#if defined(_WIN32)
+std::string WideToUtf8(const std::wstring& value) {
+    if (value.empty()) return {};
+    const int length = WideCharToMultiByte(CP_UTF8, 0, value.data(),
+                                           static_cast<int>(value.size()), nullptr, 0,
+                                           nullptr, nullptr);
+    if (length <= 0) return {};
+    std::string result(static_cast<std::size_t>(length), '\0');
+    WideCharToMultiByte(CP_UTF8, 0, value.data(), static_cast<int>(value.size()),
+                        result.data(), length, nullptr, nullptr);
+    return result;
+}
+
+std::string WindowsErrorMessage(DWORD code) {
+    wchar_t* buffer = nullptr;
+    const DWORD length = FormatMessageW(
+        FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
+            FORMAT_MESSAGE_IGNORE_INSERTS,
+        nullptr, code, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+        reinterpret_cast<wchar_t*>(&buffer), 0, nullptr);
+    std::string message;
+    if (length > 0 && buffer) {
+        message = WideToUtf8(std::wstring(buffer, length));
+        while (!message.empty() &&
+               (message.back() == '\r' || message.back() == '\n' ||
+                message.back() == ' ')) {
+            message.pop_back();
+        }
+    }
+    if (buffer) LocalFree(buffer);
+    if (message.empty()) message = "unknown Windows error";
+    return message;
+}
+
+std::string PluginMachine(const fs::path& path) {
+    std::ifstream stream(path, std::ios::binary);
+    if (!stream) return "unreadable";
+    IMAGE_DOS_HEADER dos = {};
+    stream.read(reinterpret_cast<char*>(&dos), sizeof(dos));
+    if (!stream || dos.e_magic != IMAGE_DOS_SIGNATURE || dos.e_lfanew <= 0) {
+        return "not a PE file";
+    }
+    stream.seekg(dos.e_lfanew, std::ios::beg);
+    DWORD signature = 0;
+    stream.read(reinterpret_cast<char*>(&signature), sizeof(signature));
+    if (!stream || signature != IMAGE_NT_SIGNATURE) return "not a PE file";
+    IMAGE_FILE_HEADER header = {};
+    stream.read(reinterpret_cast<char*>(&header), sizeof(header));
+    if (!stream) return "unreadable PE header";
+    switch (header.Machine) {
+    case IMAGE_FILE_MACHINE_AMD64:
+        return "x64";
+    case IMAGE_FILE_MACHINE_I386:
+        return "x86";
+    case IMAGE_FILE_MACHINE_ARM64:
+        return "ARM64";
+    default:
+        return "unknown machine 0x" +
+               [&] {
+                   std::ostringstream out;
+                   out << std::hex << header.Machine;
+                   return out.str();
+               }();
+    }
+}
+
+std::string LoadErrorDetails(DWORD code, const fs::path& path) {
+    std::ostringstream out;
+    out << "LoadLibraryW failed for '" << PathUtil::ToUtf8(path) << "'.";
+    out << " Windows error " << code << ": " << WindowsErrorMessage(code) << ".";
+    if (code == ERROR_BAD_EXE_FORMAT) {
+        out << " The plugin DLL is likely the wrong architecture; build it for x64.";
+    } else if (code == ERROR_MOD_NOT_FOUND || code == ERROR_PROC_NOT_FOUND) {
+        out << " A dependency DLL or an exported function is missing. "
+               "If the plugin uses the C++ runtime, rebuild it with the static "
+               "MSVC runtime (/MT) or ship the required VC++ runtime DLLs.";
+    } else if (code == ERROR_ACCESS_DENIED) {
+        out << " Windows blocked loading the DLL (permissions, antivirus, or "
+               "security policy).";
+    }
+    out << " Detected DLL architecture: " << PluginMachine(path) << ".";
+    return out.str();
+}
+#endif
+
 } // namespace
+
 
 PluginManager::PluginManager() {
     SetRootPath(PathUtil::UserConfigDirectory() / "plugins");
@@ -98,37 +188,68 @@ bool PluginManager::IsValidPluginId(const std::string& id, std::string* error) {
 bool PluginManager::ReadManifest(const fs::path& folder, PluginInfo* info,
                                  std::string* error) const {
     if (!info) return false;
-    std::ifstream stream(folder / ManifestPathName(), std::ios::binary);
+    const fs::path manifestPath = folder / ManifestPathName();
+    std::ifstream stream(manifestPath, std::ios::binary);
     if (!stream) {
-        if (error) *error = "Missing plugin.json.";
+        if (error) {
+            *error = "Missing plugin.json in '" + PathUtil::ToUtf8(folder) + "'.";
+        }
         return false;
     }
     try {
         nlohmann::json document;
         stream >> document;
         if (!document.is_object()) {
-            if (error) *error = "plugin.json root must be an object.";
+            if (error) *error = "plugin.json root must be a JSON object.";
             return false;
         }
-        if (document.value("schema", std::string()) != kPluginSchema) {
-            if (error) *error = "Unsupported plugin schema.";
+        if (!document.contains("schema") || !document["schema"].is_string() ||
+            document["schema"].get<std::string>() != kPluginSchema) {
+            if (error) {
+                *error = "plugin.json field 'schema' must be \"" +
+                         std::string(kPluginSchema) + "\".";
+            }
+            return false;
+        }
+        if (document.contains("schemaVersion") &&
+            (!document["schemaVersion"].is_number_integer() ||
+             document["schemaVersion"].get<int>() != 1)) {
+            if (error) *error = "plugin.json field 'schemaVersion' must be 1.";
             return false;
         }
         PluginInfo parsed;
         parsed.folder = folder;
-        parsed.id = document.value("id", PathUtil::ToUtf8(folder.filename()));
+        if (!document.contains("id") || !document["id"].is_string() ||
+            document["id"].get<std::string>().empty()) {
+            if (error) *error = "plugin.json field 'id' is required and must be a non-empty string.";
+            return false;
+        }
+        parsed.id = document["id"].get<std::string>();
+        if (!IsValidPluginId(parsed.id, error)) {
+            if (error) *error = "Invalid plugin id: " + *error;
+            return false;
+        }
         parsed.name = document.value("name", parsed.id);
         parsed.version = document.value("version", "1.0.0");
         parsed.author = document.value("author", std::string());
         parsed.description = document.value("description", std::string());
         parsed.entry = document.value("entry", std::string());
         parsed.enabled = document.value("enabled", true);
-        if (!IsValidPluginId(parsed.id, error)) return false;
+        if (parsed.entry.empty()) {
+            if (error) {
+                *error = "plugin.json field 'entry' is required and must name the plugin DLL "
+                         "(for example \"MyPlugin.dll\").";
+            }
+            return false;
+        }
         if (error) error->clear();
         *info = std::move(parsed);
         return true;
     } catch (const std::exception& exception) {
-        if (error) *error = std::string("Could not parse plugin.json: ") + exception.what();
+        if (error) {
+            *error = "Could not parse plugin.json ('" + PathUtil::ToUtf8(manifestPath) +
+                     "'): " + exception.what();
+        }
         return false;
     }
 }
@@ -185,8 +306,11 @@ void PluginManager::UnloadAll() {
 void PluginManager::LoadPlugin(LoadedPlugin& plugin) {
     plugin.library = nullptr;
     plugin.hostContext = nullptr;
+    plugin.apiBlock = nullptr;
     plugin.shutdown = nullptr;
     plugin.info.loaded = false;
+    plugin.info.error.clear();
+    plugin.info.warning.clear();
     if (plugin.info.entry.empty()) {
         plugin.info.error = "plugin.json has no entry DLL.";
         return;
@@ -195,22 +319,49 @@ void PluginManager::LoadPlugin(LoadedPlugin& plugin) {
     if (entryPath.is_relative()) entryPath = plugin.info.folder / entryPath;
     std::error_code ec;
     if (!fs::is_regular_file(entryPath, ec)) {
-        plugin.info.error = "Plugin DLL not found: " + PathUtil::ToUtf8(entryPath);
+        plugin.info.error = "Plugin entry DLL was not found: '" +
+                            PathUtil::ToUtf8(entryPath) +
+                            "'. Check the 'entry' field in plugin.json and build the DLL.";
         return;
     }
+    const fs::path canonicalFolder = fs::weakly_canonical(plugin.info.folder, ec);
+    const fs::path canonicalEntry = fs::weakly_canonical(entryPath, ec);
+    if (!ec) {
+        const fs::path relative = fs::relative(canonicalEntry, canonicalFolder, ec);
+        if (ec || relative.empty() ||
+            relative.generic_u8string().rfind("..", 0) == 0) {
+            plugin.info.error =
+                "plugin.json 'entry' must point to a DLL inside the plugin folder. "
+                "Absolute paths and '..' escapes are rejected.";
+            return;
+        }
+    }
 #if defined(_WIN32)
+    const std::string machine = PluginMachine(entryPath);
+    if (machine != "x64") {
+        plugin.info.error = "Plugin DLL architecture is '" + machine +
+                            "', but MaterialForge is x64. Build the plugin with "
+                            "the x64 MSVC toolchain.";
+        return;
+    }
     HMODULE library = ::LoadLibraryW(entryPath.c_str());
     if (!library) {
-        plugin.info.error = "LoadLibrary failed (error " +
-                            std::to_string(static_cast<unsigned long>(::GetLastError())) + ").";
+        plugin.info.error = LoadErrorDetails(::GetLastError(), entryPath);
         return;
     }
     using InitFn = int (*)(const MfPluginApi*);
     auto init = reinterpret_cast<InitFn>(
         reinterpret_cast<void*>(::GetProcAddress(library, "MaterialForgePluginInit")));
     if (!init) {
+        const DWORD code = ::GetLastError();
         ::FreeLibrary(library);
-        plugin.info.error = "DLL does not export MaterialForgePluginInit.";
+        plugin.info.error =
+            "DLL does not export MaterialForgePluginInit (Windows error " +
+            std::to_string(static_cast<unsigned long>(code)) + ": " +
+            WindowsErrorMessage(code) +
+            "). Required signature: extern \"C\" __declspec(dllexport) "
+            "int MaterialForgePluginInit(const MfPluginApi* api). "
+            "If the function is C++, it is name-mangled and cannot be loaded.";
         return;
     }
     auto* context = new HostContext();
@@ -224,11 +375,35 @@ void PluginManager::LoadPlugin(LoadedPlugin& plugin) {
     apiBlock->log = &PluginManager::HostLog;
     apiBlock->runtime_version = &PluginManager::HostRuntimeVersion;
     apiBlock->register_command = &PluginManager::HostRegisterCommand;
-    if (init(apiBlock) == 0) {
+    int initResult = 0;
+    std::string initException;
+    try {
+        initResult = init(apiBlock);
+    } catch (const std::exception& exception) {
+        initException = exception.what();
+    } catch (...) {
+        initException = "unknown exception";
+    }
+    if (initResult == 0 || !initException.empty()) {
+        std::string message = "MaterialForgePluginInit failed";
+        if (!initException.empty()) {
+            message += " with an exception: " + initException + ".";
+        } else {
+            message += " and returned 0.";
+        }
+        if (!context->lastError.empty()) {
+            message += "\nPlugin reported: " + context->lastError;
+        } else {
+            message +=
+                "\nNo diagnostic was written by the plugin. Common causes: API "
+                "version mismatch, initialization validation failed, or a required "
+                "dependency/component is missing. Log an error with api->log(host, 2, ...) "
+                "before returning 0 to see the exact reason here.";
+        }
         delete apiBlock;
         delete context;
         ::FreeLibrary(library);
-        plugin.info.error = "MaterialForgePluginInit returned false.";
+        plugin.info.error = std::move(message);
         return;
     }
     plugin.library = library;
@@ -237,7 +412,17 @@ void PluginManager::LoadPlugin(LoadedPlugin& plugin) {
     plugin.shutdown = reinterpret_cast<void (*)()>(
         reinterpret_cast<void*>(::GetProcAddress(library, "MaterialForgePluginShutdown")));
     plugin.info.loaded = true;
-    plugin.info.error.clear();
+    if (!plugin.shutdown) {
+        plugin.info.warning =
+            "Plugin loaded, but does not export MaterialForgePluginShutdown. "
+            "Resources will not be released cleanly.";
+    }
+    if (plugin.info.commands.empty()) {
+        if (!plugin.info.warning.empty()) plugin.info.warning += "\n";
+        plugin.info.warning +=
+            "Plugin loaded, but registered no CMD commands. Check register_command "
+            "return values and the command name.";
+    }
     if (m_LogHandler) {
         m_LogHandler(0, "Loaded plugin " + plugin.info.name + " " + plugin.info.version);
     }
@@ -249,7 +434,19 @@ void PluginManager::LoadPlugin(LoadedPlugin& plugin) {
 void PluginManager::UnloadPlugin(LoadedPlugin& plugin) {
 #if defined(_WIN32)
     if (plugin.shutdown) {
-        plugin.shutdown();
+        try {
+            plugin.shutdown();
+        } catch (const std::exception& exception) {
+            if (m_LogHandler) {
+                m_LogHandler(2, "Plugin '" + plugin.info.id +
+                                    "' threw during shutdown: " + exception.what());
+            }
+        } catch (...) {
+            if (m_LogHandler) {
+                m_LogHandler(2, "Plugin '" + plugin.info.id +
+                                    "' threw an unknown exception during shutdown.");
+            }
+        }
         plugin.shutdown = nullptr;
     }
     if (plugin.library) {
@@ -413,9 +610,15 @@ bool PluginManager::ExecuteCommand(const std::string& name, const std::string& a
 
 void PluginManager::HostLog(void* host, int level, const char* message) {
     auto* context = static_cast<HostContext*>(host);
-    if (!context || !context->manager || !context->manager->m_LogHandler) return;
+    if (!context || !context->manager) return;
     const std::string text = message ? message : "";
-    context->manager->m_LogHandler(level, "[" + context->pluginId + "] " + text);
+    if (level >= 2) {
+        if (!context->lastError.empty()) context->lastError.push_back('\n');
+        context->lastError += text;
+    }
+    if (context->manager->m_LogHandler) {
+        context->manager->m_LogHandler(level, "[" + context->pluginId + "] " + text);
+    }
 }
 
 const char* PluginManager::HostRuntimeVersion(void* host) {

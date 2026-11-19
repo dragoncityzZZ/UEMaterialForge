@@ -7266,7 +7266,23 @@ void Application::CreatePluginTemplate(const std::string& parentDirectory,
 
     const std::string header = R"(#pragma once
 
-// MaterialForge plugin ABI. Keep this file in sync with the host SDK.
+// MaterialForge plugin SDK header (ABI version 1).
+//
+// This file is self-contained. You do not need the MaterialForge source tree
+// or executable to compile a plugin. Build an x64 Windows DLL with C++17,
+// place plugin.json next to the DLL, then install the folder with
+// Edit -> Plugin Manager -> Add Plugin...
+//
+// Required exports:
+//   extern "C" __declspec(dllexport) int MaterialForgePluginInit(const MfPluginApi*);
+//   extern "C" __declspec(dllexport) void MaterialForgePluginShutdown();
+//
+// Keep the functions outside any namespace and use C linkage. A name-mangled
+// C++ export cannot be found by the host.
+//
+// The plugin must be built for x64. For a self-contained DLL, use the static
+// MSVC runtime (/MT); otherwise ship the required VC++ runtime DLLs nearby.
+
 #include <stdint.h>
 
 #define MF_PLUGIN_API_VERSION 1u
@@ -7280,11 +7296,19 @@ void Application::CreatePluginTemplate(const std::string& parentDirectory,
 typedef struct MfPluginApi MfPluginApi;
 typedef void (*MfPluginCommandFn)(const char* args, void* user);
 
+// The struct layout is part of the ABI. Do not reorder or add fields without
+// incrementing MF_PLUGIN_API_VERSION.
 struct MfPluginApi {
     uint32_t api_version;
     void* host;
+    // level: 0 = info, 1 = warning, 2 = error. Errors are shown by the host
+    // in the Plugin Manager and are also captured while MaterialForgePluginInit
+    // is running, so log the actual reason before returning 0.
     void (*log)(void* host, int level, const char* message);
     const char* (*runtime_version)(void* host);
+    // Registers a CMD command. The command name is case-insensitive.
+    // Return 1 on success, 0 if the name is empty/duplicated or the callback
+    // is null. Always check the return value.
     int (*register_command)(void* host, const char* name, const char* description,
                             MfPluginCommandFn callback, void* user);
 };
@@ -7294,24 +7318,39 @@ MF_PLUGIN_EXPORT void MaterialForgePluginShutdown(void);
 )";
 
     const std::string source =
-        "#include \"MaterialForgePlugin.h\"\n\n"
+        "#include \"MaterialForgePlugin.h\"\n"
+        "#include <string>\n\n"
         "static const MfPluginApi* g_api = nullptr;\n\n"
         "static void OnHello(const char* args, void* user) {\n"
-        "    (void)args;\n"
         "    (void)user;\n"
-        "    if (g_api && g_api->log) {\n"
-        "        g_api->log(g_api->host, 0, \"Hello from " + escapeCpp(cleanedName) +
-        ".\");\n"
-        "    }\n"
+        "    if (!g_api || !g_api->log) return;\n"
+        "    const char* suffix = (args && args[0]) ? args : \"(no arguments)\";\n"
+        "    g_api->log(g_api->host, 0,\n"
+        "               (std::string(\"Hello from " + escapeCpp(cleanedName) +
+        ": \") + suffix).c_str());\n"
         "}\n\n"
         "MF_PLUGIN_EXPORT int MaterialForgePluginInit(const MfPluginApi* api) {\n"
-        "    if (!api || api->api_version != MF_PLUGIN_API_VERSION) return 0;\n"
-        "    g_api = api;\n"
-        "    if (api->register_command) {\n"
-        "        api->register_command(api->host, \"" + escapeCpp(commandName) +
-        "\", \"Print a hello message from " + escapeCpp(cleanedName) + ".\", OnHello, nullptr);\n"
+        "    if (!api) return 0;\n"
+        "    if (api->api_version != MF_PLUGIN_API_VERSION) {\n"
+        "        if (api->log) api->log(api->host, 2,\n"
+        "            \"MaterialForge plugin API version mismatch: plugin expects 1.\");\n"
+        "        return 0;\n"
         "    }\n"
-        "    if (api->log) api->log(api->host, 0, \"" + escapeCpp(cleanedName) +
+        "    if (!api->log || !api->register_command) {\n"
+        "        return 0;\n"
+        "    }\n"
+        "    g_api = api;\n"
+        "    const int registered = api->register_command(\n"
+        "        api->host, \"" + escapeCpp(commandName) + "\",\n"
+        "        \"Print a hello message from " + escapeCpp(cleanedName) + ".\",\n"
+        "        OnHello, nullptr);\n"
+        "    if (!registered) {\n"
+        "        api->log(api->host, 2, \"Could not register command " +
+        escapeCpp(commandName) + ".\");\n"
+        "        g_api = nullptr;\n"
+        "        return 0;\n"
+        "    }\n"
+        "    api->log(api->host, 0, \"" + escapeCpp(cleanedName) +
         " initialized.\");\n"
         "    return 1;\n"
         "}\n\n"
@@ -7328,7 +7367,12 @@ MF_PLUGIN_EXPORT void MaterialForgePluginShutdown(void);
         "set(CMAKE_CXX_STANDARD_REQUIRED ON)\n\n"
         "add_library(" + targetName + " SHARED src/plugin.cpp)\n"
         "target_include_directories(" + targetName + " PRIVATE include)\n"
-        "if(MSVC)\n    target_compile_options(" + targetName + " PRIVATE /utf-8)\nendif()\n"
+        "if(MSVC)\n"
+        "    target_compile_options(" + targetName + " PRIVATE /utf-8 /W4)\n"
+        "    # Keep the plugin self-contained on machines without VC++ Redistributable.\n"
+        "    set_property(TARGET " + targetName +
+        " PROPERTY MSVC_RUNTIME_LIBRARY \"MultiThreaded$<$<CONFIG:Debug>:Debug>\")\n"
+        "endif()\n"
         "set_target_properties(" + targetName + " PROPERTIES OUTPUT_NAME \"" +
         cleanedName + "\")\n\n"
         "# Copy the built DLL next to plugin.json so Edit -> Plugin Manager ->\n"
@@ -7340,29 +7384,116 @@ MF_PLUGIN_EXPORT void MaterialForgePluginShutdown(void);
 
     const std::string readme =
         "# " + cleanedName + "\n\n" + description + "\n\n"
-        "MaterialForge plugin project generated by the built-in plugin wizard.\n\n"
+        "A self-contained MaterialForge plugin project generated by the built-in\n"
+        "plugin wizard. You do not need the MaterialForge source tree to build it.\n\n"
+        "## Requirements\n\n"
+        "- Windows x64\n"
+        "- CMake 3.21 or newer\n"
+        "- Visual Studio 2019/2022 with the Desktop C++ workload (MSVC x64)\n"
+        "- The `include/MaterialForgePlugin.h` file in this folder (already included)\n\n"
         "## Build\n\n"
-        "```powershell\ncmake -S . -B build\ncmake --build build --config Release\n```\n\n"
-        "The DLL is copied next to `plugin.json`. In MaterialForge choose\n"
-        "`Edit -> Plugin Manager... -> Add Plugin...` and select this folder.\n\n"
+        "```powershell\n"
+        "cmake -S . -B build -G \"Visual Studio 17 2022\" -A x64\n"
+        "cmake --build build --config Release\n"
+        "```\n\n"
+        "The build copies the DLL to `" + cleanedName + ".dll` next to this README.\n"
+        "`plugin.json` points at that exact filename. Do not rename the DLL or the\n"
+        "`entry` field unless you keep them in sync.\n\n"
+        "## Install\n\n"
+        "1. Open MaterialForge.\n"
+        "2. Choose `Edit -> Plugin Manager... -> Add Plugin...`.\n"
+        "3. Select this folder (the folder containing `plugin.json`).\n"
+        "4. If it is already installed, click `Reload All`.\n\n"
         "## Run\n\n"
-        "Open the MaterialForge CMD console and run:\n\n```text\n" + commandName + "\n```\n";
+        "Open the MaterialForge CMD console and run:\n\n"
+        "```text\n" + commandName + "\n```\n\n"
+        "## If loading fails\n\n"
+        "Open Plugin Manager and read the diagnostic. It reports the exact\n"
+        "`plugin.json` field, Windows loader error, DLL architecture, missing export,\n"
+        "or the error logged by `MaterialForgePluginInit`. Use `api->log(host, 2, ...)`\n"
+        "to report initialization failures. The plugin must export C symbols\n"
+        "`MaterialForgePluginInit` and `MaterialForgePluginShutdown`.\n";
 
     const std::string docs =
         "# MaterialForge Plugin API\n\n"
-        "Plugins are Windows DLLs exporting `MaterialForgePluginInit` and optionally\n"
-        "`MaterialForgePluginShutdown`.\n\n"
-        "## Manifest\n\n"
-        "`plugin.json` uses `schema: materialforge.plugin`, a unique `id`, display\n"
-        "`name`/`version`, and an `entry` path to the DLL relative to the plugin folder.\n\n"
-        "## Host API\n\n"
-        "- `log(host, level, message)` writes to the MaterialForge console.\n"
-        "- `runtime_version(host)` returns the host version string.\n"
-        "- `register_command(host, name, description, callback, user)` adds a CMD console command.\n\n"
-        "Commands receive the text after the command name as `args`.\n\n"
+        "This document is self-contained. A plugin author or AI can build a DLL\n"
+        "from this folder without having the MaterialForge source tree.\n\n"
+        "## ABI\n\n"
+        "The public header is `include/MaterialForgePlugin.h`, API version `1`.\n"
+        "Build an **x64** Windows DLL with C++17.\n\n"
+        "Required exports (must have C linkage):\n\n"
+        "```cpp\n"
+        "extern \"C\" __declspec(dllexport)\n"
+        "int MaterialForgePluginInit(const MfPluginApi* api);\n\n"
+        "extern \"C\" __declspec(dllexport)\n"
+        "void MaterialForgePluginShutdown();\n"
+        "```\n\n"
+        "The functions must be in the global namespace and use `extern \"C\"`.\n"
+        "A C++-mangled function is not discoverable by the host.\n\n"
+        "## MfPluginApi\n\n"
+        "```cpp\n"
+        "struct MfPluginApi {\n"
+        "    uint32_t api_version;  // must equal MF_PLUGIN_API_VERSION (1)\n"
+        "    void* host;\n"
+        "    void (*log)(void* host, int level, const char* message);\n"
+        "    const char* (*runtime_version)(void* host);\n"
+        "    int (*register_command)(void* host, const char* name,\n"
+        "                            const char* description,\n"
+        "                            MfPluginCommandFn callback, void* user);\n"
+        "};\n"
+        "```\n\n"
+        "`log` levels: 0 = info, 1 = warning, 2 = error. Errors logged during\n"
+        "`MaterialForgePluginInit` are shown in the Plugin Manager diagnostic.\n\n"
+        "`register_command` returns 1 on success, 0 if the name is empty/duplicated,\n"
+        "the callback is null, or registration fails. Always check it.\n\n"
         "## Lifecycle\n\n"
-        "Initialize once when the plugin is loaded. Release resources in the shutdown export.\n"
-        "Do not block the UI thread for long periods inside command callbacks.\n";
+        "1. Host loads the DLL with `LoadLibraryW`.\n"
+        "2. Host resolves `MaterialForgePluginInit` and calls it once.\n"
+        "3. The plugin may register commands and must keep `api`/`host` valid.\n"
+        "4. Return 1 for success; return 0 after logging a level-2 reason for failure.\n"
+        "5. On unload, host calls `MaterialForgePluginShutdown` if exported.\n\n"
+        "Do not block the UI thread for long periods in a command callback. If a\n"
+        "callback throws, the host cannot safely continue; catch exceptions inside\n"
+        "the callback and report them with `api->log(host, 2, ...)`.\n\n"
+        "## Manifest\n\n"
+        "`plugin.json` must contain:\n\n"
+        "```json\n"
+        "{\n"
+        "  \"schema\": \"materialforge.plugin\",\n"
+        "  \"schemaVersion\": 1,\n"
+        "  \"id\": \"com.example.myplugin\",\n"
+        "  \"name\": \"My Plugin\",\n"
+        "  \"version\": \"1.0.0\",\n"
+        "  \"author\": \"Author\",\n"
+        "  \"description\": \"Description\",\n"
+        "  \"entry\": \"MyPlugin.dll\",\n"
+        "  \"enabled\": true\n"
+        "}\n"
+        "```\n\n"
+        "`entry` is relative to the folder containing `plugin.json`. It must be an\n"
+        "x64 DLL and must not use `..` or an absolute path.\n\n"
+        "## Build and install\n\n"
+        "```powershell\n"
+        "cmake -S . -B build -G \"Visual Studio 17 2022\" -A x64\n"
+        "cmake --build build --config Release\n"
+        "```\n\n"
+        "The template copies the DLL next to `plugin.json` using the static MSVC\n"
+        "runtime. Install the folder with `Edit -> Plugin Manager -> Add Plugin...`.\n\n"
+        "## Troubleshooting\n\n"
+        "The Plugin Manager now reports:\n\n"
+        "- missing or invalid `plugin.json` fields;\n"
+        "- Windows `LoadLibraryW` error code and message;\n"
+        "- DLL architecture (x86/x64/ARM64) and missing dependency/runtime hints;\n"
+        "- missing `MaterialForgePluginInit` export and the required signature;\n"
+        "- the level-2 messages logged by the plugin before returning 0.\n\n"
+        "Common causes:\n\n"
+        "- Built as x86 instead of x64.\n"
+        "- The DLL is named differently from `plugin.json.entry`.\n"
+        "- The DLL was built with `/MD` but the target machine lacks the matching\n"
+        "  VC++ runtime; rebuild the template with `/MT` or ship the runtime DLLs.\n"
+        "- `MaterialForgePluginInit` is inside a namespace or not `extern \"C\"`.\n"
+        "- The API version check rejects the host; log a level-2 message before return 0.\n"
+        "- A dependency DLL was not copied next to the plugin.\n";
 
     if (!writeFile(target / "plugin.json", manifest) ||
         !writeFile(target / "include" / "MaterialForgePlugin.h", header) ||
@@ -7422,8 +7553,26 @@ void Application::DrawPluginManager() {
         ImGui::TextDisabled("%s  |  %s", plugin.id.c_str(), plugin.folder.generic_u8string().c_str());
         if (!plugin.author.empty()) ImGui::TextDisabled("%s", plugin.author.c_str());
         if (!plugin.description.empty()) ImGui::TextWrapped("%s", plugin.description.c_str());
+        if (!plugin.warning.empty()) {
+            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.98f, 0.72f, 0.31f, 1.0f));
+            ImGui::PushTextWrapPos(0.0f);
+            ImGui::TextUnformatted(plugin.warning.c_str());
+            ImGui::PopTextWrapPos();
+            ImGui::PopStyleColor();
+        }
         if (!plugin.error.empty()) {
-            ImGui::TextColored(ImVec4(0.98f, 0.45f, 0.39f, 1.0f), "%s", plugin.error.c_str());
+            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.98f, 0.45f, 0.39f, 1.0f));
+            ImGui::PushTextWrapPos(0.0f);
+            ImGui::TextUnformatted(plugin.error.c_str());
+            ImGui::PopTextWrapPos();
+            ImGui::PopStyleColor();
+            if (ImGui::SmallButton(Tr("Copy Error"))) {
+                ImGui::SetClipboardText(plugin.error.c_str());
+            }
+            if (ImGui::IsItemHovered()) {
+                ImGui::SetTooltip("%s",
+                                  Tr("Copy this diagnostic to the clipboard for the plugin author."));
+            }
         }
         if (!plugin.commands.empty()) {
             std::string commands;

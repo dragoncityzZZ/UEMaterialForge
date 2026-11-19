@@ -87,13 +87,33 @@ if (api->set_node_color) {
 if (api->set_link_style) {
     api->set_link_style(api->host, 0xFFFFB060u, 2.5f, 1);      // 0 curved, 1 straight
 }
+if (api->set_style_float) {
+    api->set_style_float(api->host, "window_rounding", 14.0f);
+}
+if (api->set_node_style) {
+    api->set_node_style(api->host, 13.0f, 2.0f, 7.0f, 1.0f);
+}
+if (api->set_canvas_style) {
+    api->set_canvas_style(api->host, 0xFFF2F7FFu, 0xFFE0D5F4u,
+                          0xFFF9FCFFu, 0xFFC1B2F2u, 0xFF9E6FFF);
+}
 ```
 
 Supported style keys are `text`, `text_disabled`, `window_bg`, `child_bg`,
-`popup_bg`, `border`, `frame_bg`, `button`, `button_hovered`, `button_active`,
-`header`, `header_hovered`, `tab`, `tab_selected`, and `accent`. Node colors can
-use a node type or a category; type overrides win. `set_ui_scale(host, scale)`
-changes the ImGui scale (clamped).
+`popup_bg`, `menu_bar_bg`, `title_bg`, `title_bg_active`, `title_bg_collapsed`,
+`border`, `frame_bg`, `scrollbar_bg`, `separator`, `button`, `button_hovered`,
+`button_active`, `header`, `header_hovered`, `tab`, `tab_selected`, and
+`accent`. Style float keys are `window_rounding`, `child_rounding`,
+`frame_rounding`, `popup_rounding`, `scrollbar_rounding`, `grab_rounding`,
+`tab_rounding`, `window_padding_x/y`, `frame_padding_x/y`, `item_spacing_x/y`,
+`window_border`, `child_border`, `frame_border`, `scrollbar_size`, and
+`grab_min_size`.
+
+`set_node_style` controls node card rounding/border and pin rounding/border.
+`set_canvas_style` controls the node canvas background, grid, node background,
+node border, and selection color. Node colors can use a node type or a category;
+type overrides win. `set_ui_scale(host, scale)` changes the ImGui scale
+(clamped).
 
 The generated plugin includes a `<plugin-id>.style` command demonstrating these
 calls.

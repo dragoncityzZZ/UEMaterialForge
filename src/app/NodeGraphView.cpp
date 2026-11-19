@@ -1080,6 +1080,24 @@ void NodeGraphView::Draw(const ImVec2& size) {
     m_EditorSize = size;
     m_EditorScreenPos = ImGui::GetCursorScreenPos();
     m_TexturePinDropHandled = false;
+    const bool pluginNodeStyle = Ui::HasPluginNodeStyle();
+    if (pluginNodeStyle) {
+        ed::PushStyleVar(ed::StyleVar_NodeRounding, Ui::PluginNodeRounding());
+        ed::PushStyleVar(ed::StyleVar_NodeBorderWidth, Ui::PluginNodeBorder());
+        ed::PushStyleVar(ed::StyleVar_PinRounding, Ui::PluginPinRounding());
+        ed::PushStyleVar(ed::StyleVar_PinBorderWidth, Ui::PluginPinBorder());
+    }
+    const bool pluginCanvasStyle = Ui::HasPluginCanvasStyle();
+    if (pluginCanvasStyle) {
+        const auto color = [](ImU32 value) { return ImGui::ColorConvertU32ToFloat4(value); };
+        ed::PushStyleColor(ed::StyleColor_Bg, color(Ui::PluginCanvasBackground()));
+        ed::PushStyleColor(ed::StyleColor_Grid, color(Ui::PluginCanvasGrid()));
+        ed::PushStyleColor(ed::StyleColor_NodeBg, color(Ui::PluginCanvasNodeBackground()));
+        ed::PushStyleColor(ed::StyleColor_NodeBorder, color(Ui::PluginCanvasNodeBorder()));
+        ed::PushStyleColor(ed::StyleColor_SelNodeBorder, color(Ui::PluginCanvasSelection()));
+        ed::PushStyleColor(ed::StyleColor_NodeSelRectBorder,
+                           color(Ui::PluginCanvasSelection()));
+    }
     ed::Begin("MaterialForgeNodeCanvas", size);
 
     TypeResolver resolver(m_Graph);
@@ -1368,6 +1386,8 @@ void NodeGraphView::Draw(const ImVec2& size) {
         }
         m_PendingCenterNode = 0;
     }
+    if (pluginCanvasStyle) ed::PopStyleColor(6);
+    if (pluginNodeStyle) ed::PopStyleVar(4);
 
     ed::SetCurrentEditor(nullptr);
 }

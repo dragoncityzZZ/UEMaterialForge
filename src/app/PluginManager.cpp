@@ -26,7 +26,7 @@ namespace {
 
 constexpr const char* kPluginSchema = "materialforge.plugin";
 #ifndef MF_VERSION_STRING
-#define MF_VERSION_STRING "2.6.6"
+#define MF_VERSION_STRING "2.6.7"
 #endif
 constexpr const char* kRuntimeVersion = MF_VERSION_STRING;
 
@@ -384,6 +384,9 @@ void PluginManager::LoadPlugin(LoadedPlugin& plugin) {
     apiBlock->set_link_style = &PluginManager::HostSetLinkStyle;
     apiBlock->clear_link_style = &PluginManager::HostClearLinkStyle;
     apiBlock->set_ui_scale = &PluginManager::HostSetUiScale;
+    apiBlock->set_style_float = &PluginManager::HostSetStyleFloat;
+    apiBlock->set_node_style = &PluginManager::HostSetNodeStyle;
+    apiBlock->set_canvas_style = &PluginManager::HostSetCanvasStyle;
     int initResult = 0;
     std::string initException;
     try {
@@ -691,6 +694,26 @@ int PluginManager::HostSetUiScale(void* host, float scale) {
     if (!host) return 0;
     Ui::SetScale(scale);
     Ui::ApplyStyle();
+    return 1;
+}
+
+int PluginManager::HostSetStyleFloat(void* host, const char* key, float value) {
+    if (!host || !key) return 0;
+    return Ui::SetPluginStyleFloat(key, value) ? 1 : 0;
+}
+
+int PluginManager::HostSetNodeStyle(void* host, float rounding, float border,
+                                    float pinRounding, float pinBorder) {
+    if (!host) return 0;
+    Ui::SetPluginNodeStyle(rounding, border, pinRounding, pinBorder);
+    return 1;
+}
+
+int PluginManager::HostSetCanvasStyle(void* host, uint32_t background, uint32_t grid,
+                                      uint32_t nodeBackground, uint32_t nodeBorder,
+                                      uint32_t selection) {
+    if (!host) return 0;
+    Ui::SetPluginCanvasStyle(background, grid, nodeBackground, nodeBorder, selection);
     return 1;
 }
 

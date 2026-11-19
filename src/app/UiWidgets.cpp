@@ -10,6 +10,18 @@ Theme g_Theme = Theme::Graphite;
 float g_Scale = 1.0f;
 std::unordered_map<std::string, ImU32> g_PluginStyleColors;
 std::unordered_map<std::string, ImU32> g_PluginNodeColors;
+std::unordered_map<std::string, float> g_PluginStyleFloats;
+bool g_PluginNodeStyle = false;
+float g_PluginNodeRounding = 8.0f;
+float g_PluginNodeBorder = 1.0f;
+float g_PluginPinRounding = 4.0f;
+float g_PluginPinBorder = 1.0f;
+bool g_PluginCanvasStyle = false;
+ImU32 g_PluginCanvasBackground = 0;
+ImU32 g_PluginCanvasGrid = 0;
+ImU32 g_PluginCanvasNodeBackground = 0;
+ImU32 g_PluginCanvasNodeBorder = 0;
+ImU32 g_PluginCanvasSelection = 0;
 bool g_PluginLinkStyle = false;
 ImU32 g_PluginLinkColor = 0;
 float g_PluginLinkThickness = 2.0f;
@@ -175,8 +187,14 @@ void ApplyStyle() {
     applyPluginColor("window_bg", ImGuiCol_WindowBg);
     applyPluginColor("child_bg", ImGuiCol_ChildBg);
     applyPluginColor("popup_bg", ImGuiCol_PopupBg);
+    applyPluginColor("menu_bar_bg", ImGuiCol_MenuBarBg);
+    applyPluginColor("title_bg", ImGuiCol_TitleBg);
+    applyPluginColor("title_bg_active", ImGuiCol_TitleBgActive);
+    applyPluginColor("title_bg_collapsed", ImGuiCol_TitleBgCollapsed);
     applyPluginColor("border", ImGuiCol_Border);
     applyPluginColor("frame_bg", ImGuiCol_FrameBg);
+    applyPluginColor("scrollbar_bg", ImGuiCol_ScrollbarBg);
+    applyPluginColor("separator", ImGuiCol_Separator);
     applyPluginColor("button", ImGuiCol_Button);
     applyPluginColor("button_hovered", ImGuiCol_ButtonHovered);
     applyPluginColor("button_active", ImGuiCol_ButtonActive);
@@ -192,6 +210,28 @@ void ApplyStyle() {
         colors[ImGuiCol_SliderGrabActive] = color;
         colors[ImGuiCol_NavCursor] = color;
     }
+    const auto floatOverride = [&](const char* key, float fallback) {
+        const auto it = g_PluginStyleFloats.find(key);
+        return it == g_PluginStyleFloats.end() ? fallback : it->second;
+    };
+    style.WindowRounding = floatOverride("window_rounding", style.WindowRounding);
+    style.ChildRounding = floatOverride("child_rounding", style.ChildRounding);
+    style.FrameRounding = floatOverride("frame_rounding", style.FrameRounding);
+    style.PopupRounding = floatOverride("popup_rounding", style.PopupRounding);
+    style.ScrollbarRounding = floatOverride("scrollbar_rounding", style.ScrollbarRounding);
+    style.GrabRounding = floatOverride("grab_rounding", style.GrabRounding);
+    style.TabRounding = floatOverride("tab_rounding", style.TabRounding);
+    style.WindowPadding.x = floatOverride("window_padding_x", style.WindowPadding.x);
+    style.WindowPadding.y = floatOverride("window_padding_y", style.WindowPadding.y);
+    style.FramePadding.x = floatOverride("frame_padding_x", style.FramePadding.x);
+    style.FramePadding.y = floatOverride("frame_padding_y", style.FramePadding.y);
+    style.ItemSpacing.x = floatOverride("item_spacing_x", style.ItemSpacing.x);
+    style.ItemSpacing.y = floatOverride("item_spacing_y", style.ItemSpacing.y);
+    style.WindowBorderSize = floatOverride("window_border", style.WindowBorderSize);
+    style.ChildBorderSize = floatOverride("child_border", style.ChildBorderSize);
+    style.FrameBorderSize = floatOverride("frame_border", style.FrameBorderSize);
+    style.ScrollbarSize = floatOverride("scrollbar_size", style.ScrollbarSize);
+    style.GrabMinSize = floatOverride("grab_min_size", style.GrabMinSize);
     style.ScaleAllSizes(g_Scale);
 }
 
@@ -218,9 +258,11 @@ void SetPluginTheme(std::string_view name) {
 
 bool SetPluginStyleColor(std::string_view key, ImU32 color) {
     static const char* const supported[] = {
-        "text", "text_disabled", "window_bg", "child_bg", "popup_bg", "border",
-        "frame_bg", "button", "button_hovered", "button_active", "header",
-        "header_hovered", "tab", "tab_selected", "accent"};
+        "text", "text_disabled", "window_bg", "child_bg", "popup_bg",
+        "menu_bar_bg", "title_bg", "title_bg_active", "title_bg_collapsed",
+        "border", "frame_bg", "scrollbar_bg", "separator", "button",
+        "button_hovered", "button_active", "header", "header_hovered", "tab",
+        "tab_selected", "accent"};
     if (std::find_if(std::begin(supported), std::end(supported),
                      [&](const char* candidate) { return key == candidate; }) ==
         std::end(supported)) {
@@ -256,11 +298,92 @@ void ClearPluginLinkStyle() {
     g_PluginLinkStyle = false;
 }
 
+bool SetPluginStyleFloat(std::string_view key, float value) {
+    static const char* const supported[] = {
+        "window_rounding", "child_rounding", "frame_rounding", "popup_rounding",
+        "scrollbar_rounding", "grab_rounding", "tab_rounding", "window_padding_x",
+        "window_padding_y", "frame_padding_x", "frame_padding_y", "item_spacing_x",
+        "item_spacing_y", "window_border", "child_border", "frame_border",
+        "scrollbar_size", "grab_min_size"};
+    if (std::find_if(std::begin(supported), std::end(supported),
+                     [&](const char* candidate) { return key == candidate; }) ==
+        std::end(supported)) {
+        return false;
+    }
+    g_PluginStyleFloats[std::string(key)] = std::max(0.0f, value);
+    ApplyStyle();
+    return true;
+}
+
+void SetPluginNodeStyle(float rounding, float border, float pinRounding, float pinBorder) {
+    g_PluginNodeStyle = true;
+    g_PluginNodeRounding = std::clamp(rounding, 0.0f, 32.0f);
+    g_PluginNodeBorder = std::clamp(border, 0.0f, 8.0f);
+    g_PluginPinRounding = std::clamp(pinRounding, 0.0f, 16.0f);
+    g_PluginPinBorder = std::clamp(pinBorder, 0.0f, 8.0f);
+}
+
+bool HasPluginNodeStyle() {
+    return g_PluginNodeStyle;
+}
+
+float PluginNodeRounding() {
+    return g_PluginNodeRounding;
+}
+
+float PluginNodeBorder() {
+    return g_PluginNodeBorder;
+}
+
+float PluginPinRounding() {
+    return g_PluginPinRounding;
+}
+
+float PluginPinBorder() {
+    return g_PluginPinBorder;
+}
+
+void SetPluginCanvasStyle(ImU32 background, ImU32 grid, ImU32 nodeBackground,
+                          ImU32 nodeBorder, ImU32 selection) {
+    g_PluginCanvasStyle = true;
+    g_PluginCanvasBackground = background;
+    g_PluginCanvasGrid = grid;
+    g_PluginCanvasNodeBackground = nodeBackground;
+    g_PluginCanvasNodeBorder = nodeBorder;
+    g_PluginCanvasSelection = selection;
+}
+
+bool HasPluginCanvasStyle() {
+    return g_PluginCanvasStyle;
+}
+
+ImU32 PluginCanvasBackground() {
+    return g_PluginCanvasBackground;
+}
+
+ImU32 PluginCanvasGrid() {
+    return g_PluginCanvasGrid;
+}
+
+ImU32 PluginCanvasNodeBackground() {
+    return g_PluginCanvasNodeBackground;
+}
+
+ImU32 PluginCanvasNodeBorder() {
+    return g_PluginCanvasNodeBorder;
+}
+
+ImU32 PluginCanvasSelection() {
+    return g_PluginCanvasSelection;
+}
+
 ImVec4 NodeAccentColor(std::string_view nodeType, std::string_view category) {
     const auto typeIt = g_PluginNodeColors.find(std::string(nodeType));
     if (typeIt != g_PluginNodeColors.end()) return ColorFromU32(typeIt->second);
     const auto categoryIt = g_PluginNodeColors.find(std::string(category));
     if (categoryIt != g_PluginNodeColors.end()) return ColorFromU32(categoryIt->second);
+    const auto defaultIt = g_PluginNodeColors.find("Default");
+    if (defaultIt != g_PluginNodeColors.end()) return ColorFromU32(defaultIt->second);
     return CategoryColor(category);
 }
 

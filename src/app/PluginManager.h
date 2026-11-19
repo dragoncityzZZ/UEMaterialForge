@@ -88,6 +88,12 @@ private:
     static int HostSetLinkStyle(void* host, uint32_t rgba, float thickness, int shape);
     static int HostClearLinkStyle(void* host);
     static int HostSetUiScale(void* host, float scale);
+    static int HostSetStyleFloat(void* host, const char* key, float value);
+    static int HostSetNodeStyle(void* host, float rounding, float border,
+                                float pinRounding, float pinBorder);
+    static int HostSetCanvasStyle(void* host, uint32_t background, uint32_t grid,
+                                  uint32_t nodeBackground, uint32_t nodeBorder,
+                                  uint32_t selection);
     bool RegisterCommand(const std::string& pluginId, const std::string& name,
                          const std::string& description, void (*callback)(const char*, void*),
                          void* user);

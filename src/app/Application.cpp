@@ -7314,9 +7314,10 @@ struct MfPluginApi {
 
     // Optional visual customization API. These fields are appended for
     // compatibility with older plugins. Colors use 0xAABBGGRR (ImU32).
-    // style keys: text, text_disabled, window_bg, child_bg, popup_bg, border,
-    // frame_bg, button, button_hovered, button_active, header, header_hovered,
-    // tab, tab_selected, accent.
+    // style keys: text, text_disabled, window_bg, child_bg, popup_bg,
+    // menu_bar_bg, title_bg, title_bg_active, title_bg_collapsed, border,
+    // frame_bg, scrollbar_bg, separator, button, button_hovered, button_active,
+    // header, header_hovered, tab, tab_selected, accent.
     // Node color key may be a node type or category; type wins.
     int (*set_theme)(void* host, const char* name);
     int (*set_style_color)(void* host, const char* key, uint32_t rgba);
@@ -7326,6 +7327,18 @@ struct MfPluginApi {
     int (*set_link_style)(void* host, uint32_t rgba, float thickness, int shape);
     int (*clear_link_style)(void* host);
     int (*set_ui_scale)(void* host, float scale);
+    // Style floats: window_rounding, child_rounding, frame_rounding,
+    // popup_rounding, scrollbar_rounding, grab_rounding, tab_rounding,
+    // window_padding_x/y, frame_padding_x/y, item_spacing_x/y,
+    // window_border, child_border, frame_border, scrollbar_size, grab_min_size.
+    int (*set_style_float)(void* host, const char* key, float value);
+    // Node editor visual style: rounding, border, pin rounding, pin border.
+    int (*set_node_style)(void* host, float rounding, float border,
+                          float pinRounding, float pinBorder);
+    // Node canvas style: background, grid, node background, node border, selection.
+    int (*set_canvas_style)(void* host, uint32_t background, uint32_t grid,
+                            uint32_t nodeBackground, uint32_t nodeBorder,
+                            uint32_t selection);
 };
 
 MF_PLUGIN_EXPORT int MaterialForgePluginInit(const MfPluginApi* api);
@@ -7514,11 +7527,16 @@ MF_PLUGIN_EXPORT void MaterialForgePluginShutdown(void);
         "- `set_style_color(host, key, rgba)` / `clear_style_color`\n"
         "- `set_node_color(host, nodeTypeOrCategory, rgba)` / `clear_node_color`\n"
         "- `set_link_style(host, rgba, thickness, shape)` / `clear_link_style`\n"
+        "- `set_style_float(host, key, value)` for rounding/padding/borders\n"
+        "- `set_node_style(host, rounding, border, pinRounding, pinBorder)`\n"
+        "- `set_canvas_style(host, bg, grid, nodeBg, nodeBorder, selection)`\n"
         "- `set_ui_scale(host, scale)`\n\n"
         "Colors are `0xAABBGGRR` (ImU32). Style keys are `text`, `text_disabled`,\n"
-        "`window_bg`, `child_bg`, `popup_bg`, `border`, `frame_bg`, `button`,\n"
-        "`button_hovered`, `button_active`, `header`, `header_hovered`, `tab`,\n"
-        "`tab_selected`, `accent`. Link `shape` 0 is curved, 1 is straight.\n"
+        "`window_bg`, `child_bg`, `popup_bg`, `menu_bar_bg`, `title_bg`,\n"
+        "`title_bg_active`, `title_bg_collapsed`, `border`, `frame_bg`,\n"
+        "`scrollbar_bg`, `separator`, `button`, `button_hovered`, `button_active`,\n"
+        "`header`, `header_hovered`, `tab`, `tab_selected`, `accent`. Link `shape`\n"
+        "0 is curved, 1 is straight.\n"
         "The generated `" + commandName + ".style` command demonstrates these calls.\n\n"
         "## Troubleshooting\n\n"
         "The Plugin Manager now reports:\n\n"

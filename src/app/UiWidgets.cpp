@@ -1,13 +1,24 @@
 #include "app/UiWidgets.h"
 
 #include <algorithm>
+#include <iterator>
 
 namespace mf::Ui {
 
 namespace {
 Theme g_Theme = Theme::Graphite;
 float g_Scale = 1.0f;
+std::unordered_map<std::string, ImU32> g_PluginStyleColors;
+std::unordered_map<std::string, ImU32> g_PluginNodeColors;
+bool g_PluginLinkStyle = false;
+ImU32 g_PluginLinkColor = 0;
+float g_PluginLinkThickness = 2.0f;
+int g_PluginLinkShape = 0;
+
+ImVec4 ColorFromU32(ImU32 color) {
+    return ImGui::ColorConvertU32ToFloat4(color);
 }
+} // namespace
 
 void SetTheme(Theme theme) {
     g_Theme = theme;
@@ -34,7 +45,9 @@ const char* ThemeName(Theme theme) {
 }
 
 void ApplyStyle() {
+    if (!ImGui::GetCurrentContext()) return;
     ImGuiStyle& style = ImGui::GetStyle();
+
     style.WindowPadding = ImVec2(14.0f, 12.0f);
     style.FramePadding = ImVec2(10.0f, 6.0f);
     style.CellPadding = ImVec2(8.0f, 5.0f);
@@ -153,6 +166,32 @@ void ApplyStyle() {
         colors[ImGuiCol_TableBorderLight] = ImVec4(0.22f, 0.24f, 0.26f, 1.00f);
         colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.04f, 0.045f, 0.05f, 0.58f);
     }
+    const auto applyPluginColor = [&](const char* key, ImGuiCol target) {
+        const auto it = g_PluginStyleColors.find(key);
+        if (it != g_PluginStyleColors.end()) colors[target] = ColorFromU32(it->second);
+    };
+    applyPluginColor("text", ImGuiCol_Text);
+    applyPluginColor("text_disabled", ImGuiCol_TextDisabled);
+    applyPluginColor("window_bg", ImGuiCol_WindowBg);
+    applyPluginColor("child_bg", ImGuiCol_ChildBg);
+    applyPluginColor("popup_bg", ImGuiCol_PopupBg);
+    applyPluginColor("border", ImGuiCol_Border);
+    applyPluginColor("frame_bg", ImGuiCol_FrameBg);
+    applyPluginColor("button", ImGuiCol_Button);
+    applyPluginColor("button_hovered", ImGuiCol_ButtonHovered);
+    applyPluginColor("button_active", ImGuiCol_ButtonActive);
+    applyPluginColor("header", ImGuiCol_Header);
+    applyPluginColor("header_hovered", ImGuiCol_HeaderHovered);
+    applyPluginColor("tab", ImGuiCol_Tab);
+    applyPluginColor("tab_selected", ImGuiCol_TabSelected);
+    const auto accent = g_PluginStyleColors.find("accent");
+    if (accent != g_PluginStyleColors.end()) {
+        const ImVec4 color = ColorFromU32(accent->second);
+        colors[ImGuiCol_CheckMark] = color;
+        colors[ImGuiCol_SliderGrab] = color;
+        colors[ImGuiCol_SliderGrabActive] = color;
+        colors[ImGuiCol_NavCursor] = color;
+    }
     style.ScaleAllSizes(g_Scale);
 }
 
@@ -166,6 +205,79 @@ ImVec4 CategoryColor(std::string_view category) {
     if (category == "Utility") return ImVec4(0.55f, 0.83f, 0.67f, 1.0f);
     if (category == "Functions") return ImVec4(0.56f, 0.72f, 1.00f, 1.0f);
     return ImVec4(0.62f, 0.69f, 0.72f, 1.0f);
+}
+
+void SetPluginTheme(std::string_view name) {
+    if (name == "midnight") {
+        SetTheme(Theme::Midnight);
+    } else if (name == "graphite") {
+        SetTheme(Theme::Graphite);
+    }
+    ApplyStyle();
+}
+
+bool SetPluginStyleColor(std::string_view key, ImU32 color) {
+    static const char* const supported[] = {
+        "text", "text_disabled", "window_bg", "child_bg", "popup_bg", "border",
+        "frame_bg", "button", "button_hovered", "button_active", "header",
+        "header_hovered", "tab", "tab_selected", "accent"};
+    if (std::find_if(std::begin(supported), std::end(supported),
+                     [&](const char* candidate) { return key == candidate; }) ==
+        std::end(supported)) {
+        return false;
+    }
+    g_PluginStyleColors[std::string(key)] = color;
+    ApplyStyle();
+    return true;
+}
+
+bool ClearPluginStyleColor(std::string_view key) {
+    const bool erased = g_PluginStyleColors.erase(std::string(key)) != 0;
+    if (erased) ApplyStyle();
+    return erased;
+}
+
+void SetPluginNodeColor(std::string_view key, ImU32 color) {
+    g_PluginNodeColors[std::string(key)] = color;
+}
+
+void ClearPluginNodeColor(std::string_view key) {
+    g_PluginNodeColors.erase(std::string(key));
+}
+
+void SetPluginLinkStyle(ImU32 color, float thickness, int shape) {
+    g_PluginLinkStyle = true;
+    g_PluginLinkColor = color;
+    g_PluginLinkThickness = std::clamp(thickness, 0.5f, 12.0f);
+    g_PluginLinkShape = shape == 1 ? 1 : 0;
+}
+
+void ClearPluginLinkStyle() {
+    g_PluginLinkStyle = false;
+}
+
+ImVec4 NodeAccentColor(std::string_view nodeType, std::string_view category) {
+    const auto typeIt = g_PluginNodeColors.find(std::string(nodeType));
+    if (typeIt != g_PluginNodeColors.end()) return ColorFromU32(typeIt->second);
+    const auto categoryIt = g_PluginNodeColors.find(std::string(category));
+    if (categoryIt != g_PluginNodeColors.end()) return ColorFromU32(categoryIt->second);
+    return CategoryColor(category);
+}
+
+bool HasPluginLinkStyle() {
+    return g_PluginLinkStyle;
+}
+
+ImU32 PluginLinkColor(ImU32 fallback) {
+    return g_PluginLinkStyle ? g_PluginLinkColor : fallback;
+}
+
+float PluginLinkThickness() {
+    return g_PluginLinkStyle ? g_PluginLinkThickness : 2.0f;
+}
+
+int PluginLinkShape() {
+    return g_PluginLinkShape;
 }
 
 ImVec4 PinTypeColor(PinType type, bool connected) {

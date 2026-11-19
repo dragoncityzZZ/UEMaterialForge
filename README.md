@@ -14,7 +14,7 @@
 
 - 开源仓库：[dragoncityzZZ/dgndx](https://github.com/dragoncityzZZ/dgndx)
 - 下载安装包：[Releases](https://github.com/dragoncityzZZ/dgndx/releases/latest)
-- 当前版本：**2.6.5** · Windows x64 · 中文 / English
+- 当前版本：**2.6.6** · Windows x64 · 中文 / English
 - 主要技术：C++17、Dear ImGui、imgui-node-editor、OpenGL / Vulkan / DX12
 
 ## 截图
@@ -114,6 +114,8 @@
 - **编辑 → 插件管理器...**：添加、启用/禁用、重载、卸载插件。
 - 插件是带 `plugin.json` 的 Windows DLL，通过 `MaterialForgePluginInit` 注册
   CMD 控制台命令。
+- 插件 API 还支持视觉定制：主题、ImGui 样式色、节点类型/分类颜色、
+  连接线颜色/粗细/直曲造型和 UI 缩放；颜色使用 `0xAABBGGRR`。
 - **创建插件...** 使用 Windows 原生文件夹选择器选择位置，生成
   `plugin.json`、CMakeLists、C++ 源码、公共头文件、README 和 API 文档。
 - 详见 [docs/PLUGINS.md](docs/PLUGINS.md)。
@@ -127,7 +129,7 @@
 安装包生成在：
 
 ```text
-dist/installer/MaterialForge-2.6.5-Setup.exe
+dist/installer/MaterialForge-2.6.6-Setup.exe
 ```
 
 运行安装程序后从开始菜单或桌面快捷方式启动。安装包包含程序、默认纹理、
@@ -162,7 +164,7 @@ cmake --build build
 > “Windows 已保护你的电脑 / 发布者未知”。这是 Windows 对下载文件的
 > SmartScreen 检查，不是安装包缺少卸载程序。要让 SmartScreen 显示发布者，
 > 需要用受信任的代码签名证书对 `MaterialForge.exe` 和
-> `MaterialForge-2.6.5-Setup.exe` 签名。构建脚本支持 PFX 或证书指纹：
+> `MaterialForge-2.6.6-Setup.exe` 签名。构建脚本支持 PFX 或证书指纹：
 >
 > ```powershell
 > $env:MATERIALFORGE_SIGN_PFX = "C:\path\to\codesign.pfx"
@@ -184,7 +186,7 @@ cmake --build build
 ### 便携版
 
 ```text
-dist/MaterialForge-2.6.5-win64-portable/
+dist/MaterialForge-2.6.6-win64-portable/
 ├─ MaterialForge.exe
 ├─ vulkan-1.dll      # Khronos Vulkan loader
 ├─ d3dcompiler_47.dll
@@ -204,11 +206,11 @@ Windows GUI 子系统，不依赖额外 VC++ Redistributable。
 
 ```powershell
 # 打开示例工程
-.\dist\MaterialForge-2.6.5-win64-portable\MaterialForge.exe `
+.\dist\MaterialForge-2.6.6-win64-portable\MaterialForge.exe `
   .\examples\projects\hologram_demo\HologramDemo.mfproject
 
 # 打开单个材质
-.\dist\MaterialForge-2.6.5-win64-portable\MaterialForge.exe `
+.\dist\MaterialForge-2.6.6-win64-portable\MaterialForge.exe `
   --open .\examples\graphs\hologram_circuit.json
 ```
 
@@ -252,7 +254,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\build-installer.ps1
 & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" .\installer\MaterialForge.iss
 ```
 
-输出：`dist/installer/MaterialForge-2.6.5-Setup.exe`。
+输出：`dist/installer/MaterialForge-2.6.6-Setup.exe`。
 
 ---
 

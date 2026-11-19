@@ -7311,6 +7311,21 @@ struct MfPluginApi {
     // is null. Always check the return value.
     int (*register_command)(void* host, const char* name, const char* description,
                             MfPluginCommandFn callback, void* user);
+
+    // Optional visual customization API. These fields are appended for
+    // compatibility with older plugins. Colors use 0xAABBGGRR (ImU32).
+    // style keys: text, text_disabled, window_bg, child_bg, popup_bg, border,
+    // frame_bg, button, button_hovered, button_active, header, header_hovered,
+    // tab, tab_selected, accent.
+    // Node color key may be a node type or category; type wins.
+    int (*set_theme)(void* host, const char* name);
+    int (*set_style_color)(void* host, const char* key, uint32_t rgba);
+    int (*clear_style_color)(void* host, const char* key);
+    int (*set_node_color)(void* host, const char* key, uint32_t rgba);
+    int (*clear_node_color)(void* host, const char* key);
+    int (*set_link_style)(void* host, uint32_t rgba, float thickness, int shape);
+    int (*clear_link_style)(void* host);
+    int (*set_ui_scale)(void* host, float scale);
 };
 
 MF_PLUGIN_EXPORT int MaterialForgePluginInit(const MfPluginApi* api);
@@ -7328,6 +7343,15 @@ MF_PLUGIN_EXPORT void MaterialForgePluginShutdown(void);
         "    g_api->log(g_api->host, 0,\n"
         "               (std::string(\"Hello from " + escapeCpp(cleanedName) +
         ": \") + suffix).c_str());\n"
+        "}\n\n"
+        "static void OnStyle(const char* args, void* user) {\n"
+        "    (void)args;\n"
+        "    (void)user;\n"
+        "    if (!g_api) return;\n"
+        "    if (g_api->set_theme) g_api->set_theme(g_api->host, \"midnight\");\n"
+        "    if (g_api->set_node_color) g_api->set_node_color(g_api->host, \"Math\", 0xFFD080FFu);\n"
+        "    if (g_api->set_link_style) g_api->set_link_style(g_api->host, 0xFFFFB060u, 2.5f, 1);\n"
+        "    if (g_api->log) g_api->log(g_api->host, 0, \"Applied plugin visual style.\");\n"
         "}\n\n"
         "MF_PLUGIN_EXPORT int MaterialForgePluginInit(const MfPluginApi* api) {\n"
         "    if (!api) return 0;\n"
@@ -7349,6 +7373,10 @@ MF_PLUGIN_EXPORT void MaterialForgePluginShutdown(void);
         escapeCpp(commandName) + ".\");\n"
         "        g_api = nullptr;\n"
         "        return 0;\n"
+        "    }\n"
+        "    if (!api->register_command(api->host, \"" + escapeCpp(commandName) +
+        ".style\", \"Apply a sample plugin visual style.\", OnStyle, nullptr)) {\n"
+        "        api->log(api->host, 1, \"Could not register the optional style command.\");\n"
         "    }\n"
         "    api->log(api->host, 0, \"" + escapeCpp(cleanedName) +
         " initialized.\");\n"
@@ -7479,6 +7507,19 @@ MF_PLUGIN_EXPORT void MaterialForgePluginShutdown(void);
         "```\n\n"
         "The template copies the DLL next to `plugin.json` using the static MSVC\n"
         "runtime. Install the folder with `Edit -> Plugin Manager -> Add Plugin...`.\n\n"
+        "## Visual customization\n\n"
+        "The API exposes optional UI controls (check pointers for null if you target\n"
+        "an older host):\n\n"
+        "- `set_theme(host, \"graphite\" | \"midnight\")`\n"
+        "- `set_style_color(host, key, rgba)` / `clear_style_color`\n"
+        "- `set_node_color(host, nodeTypeOrCategory, rgba)` / `clear_node_color`\n"
+        "- `set_link_style(host, rgba, thickness, shape)` / `clear_link_style`\n"
+        "- `set_ui_scale(host, scale)`\n\n"
+        "Colors are `0xAABBGGRR` (ImU32). Style keys are `text`, `text_disabled`,\n"
+        "`window_bg`, `child_bg`, `popup_bg`, `border`, `frame_bg`, `button`,\n"
+        "`button_hovered`, `button_active`, `header`, `header_hovered`, `tab`,\n"
+        "`tab_selected`, `accent`. Link `shape` 0 is curved, 1 is straight.\n"
+        "The generated `" + commandName + ".style` command demonstrates these calls.\n\n"
         "## Troubleshooting\n\n"
         "The Plugin Manager now reports:\n\n"
         "- missing or invalid `plugin.json` fields;\n"

@@ -1,5 +1,6 @@
 #include "app/PluginManager.h"
 
+#include "app/UiWidgets.h"
 #include "plugin/MaterialForgePlugin.h"
 #include "util/PathUtil.h"
 
@@ -25,7 +26,7 @@ namespace {
 
 constexpr const char* kPluginSchema = "materialforge.plugin";
 #ifndef MF_VERSION_STRING
-#define MF_VERSION_STRING "2.6.5"
+#define MF_VERSION_STRING "2.6.6"
 #endif
 constexpr const char* kRuntimeVersion = MF_VERSION_STRING;
 
@@ -375,6 +376,14 @@ void PluginManager::LoadPlugin(LoadedPlugin& plugin) {
     apiBlock->log = &PluginManager::HostLog;
     apiBlock->runtime_version = &PluginManager::HostRuntimeVersion;
     apiBlock->register_command = &PluginManager::HostRegisterCommand;
+    apiBlock->set_theme = &PluginManager::HostSetTheme;
+    apiBlock->set_style_color = &PluginManager::HostSetStyleColor;
+    apiBlock->clear_style_color = &PluginManager::HostClearStyleColor;
+    apiBlock->set_node_color = &PluginManager::HostSetNodeColor;
+    apiBlock->clear_node_color = &PluginManager::HostClearNodeColor;
+    apiBlock->set_link_style = &PluginManager::HostSetLinkStyle;
+    apiBlock->clear_link_style = &PluginManager::HostClearLinkStyle;
+    apiBlock->set_ui_scale = &PluginManager::HostSetUiScale;
     int initResult = 0;
     std::string initException;
     try {
@@ -634,6 +643,55 @@ int PluginManager::HostRegisterCommand(void* host, const char* name, const char*
                                              description ? description : "", callback, user)
                ? 1
                : 0;
+}
+
+int PluginManager::HostSetTheme(void* host, const char* name) {
+    if (!host || !name) return 0;
+    const std::string theme = ToLower(name);
+    if (theme != "graphite" && theme != "midnight") return 0;
+    Ui::SetPluginTheme(theme);
+    return 1;
+}
+
+int PluginManager::HostSetStyleColor(void* host, const char* key, uint32_t rgba) {
+    if (!host || !key) return 0;
+    return Ui::SetPluginStyleColor(key, rgba) ? 1 : 0;
+}
+
+int PluginManager::HostClearStyleColor(void* host, const char* key) {
+    if (!host || !key) return 0;
+    return Ui::ClearPluginStyleColor(key) ? 1 : 0;
+}
+
+int PluginManager::HostSetNodeColor(void* host, const char* key, uint32_t rgba) {
+    if (!host || !key || !key[0]) return 0;
+    Ui::SetPluginNodeColor(key, rgba);
+    return 1;
+}
+
+int PluginManager::HostClearNodeColor(void* host, const char* key) {
+    if (!host || !key || !key[0]) return 0;
+    Ui::ClearPluginNodeColor(key);
+    return 1;
+}
+
+int PluginManager::HostSetLinkStyle(void* host, uint32_t rgba, float thickness, int shape) {
+    if (!host) return 0;
+    Ui::SetPluginLinkStyle(rgba, thickness, shape);
+    return 1;
+}
+
+int PluginManager::HostClearLinkStyle(void* host) {
+    if (!host) return 0;
+    Ui::ClearPluginLinkStyle();
+    return 1;
+}
+
+int PluginManager::HostSetUiScale(void* host, float scale) {
+    if (!host) return 0;
+    Ui::SetScale(scale);
+    Ui::ApplyStyle();
+    return 1;
 }
 
 } // namespace mf

@@ -89,7 +89,8 @@ PinType FunctionNodePinType(const Node& node) {
 }
 
 ImVec4 LinkColorFor(const Pin& outputPin, TypeResolver& resolver) {
-    return Ui::PinTypeColor(resolver.GetEffectiveType(outputPin), true);
+    const ImU32 fallback = Ui::ToU32(Ui::PinTypeColor(resolver.GetEffectiveType(outputPin), true));
+    return ImGui::ColorConvertU32ToFloat4(Ui::PluginLinkColor(fallback));
 }
 
 void ShowPinTooltip(const Pin& pin, PinType effectiveType, bool connected) {
@@ -1099,14 +1100,20 @@ void NodeGraphView::Draw(const ImVec2& size) {
     drawNodes(true);
     drawNodes(false);
 
+    const bool pluginLinkStyle = Ui::HasPluginLinkStyle();
+    if (pluginLinkStyle) {
+        ed::PushStyleVar(ed::StyleVar_LinkStrength,
+                         Ui::PluginLinkShape() == 1 ? 0.0f : 100.0f);
+    }
     for (const Link& link : m_Graph.Links()) {
         const Pin* from = m_Graph.FindPin(link.fromPin);
         const Pin* to = m_Graph.FindPin(link.toPin);
         if (!from || !to) continue;
         const ImVec4 color = LinkColorFor(*from, resolver);
         ed::Link(ToEditorLink(link.id), ToEditorPin(link.fromPin), ToEditorPin(link.toPin),
-                 color, 2.0f);
+                 color, Ui::PluginLinkThickness());
     }
+    if (pluginLinkStyle) ed::PopStyleVar();
 
     DrawCreateAndDeleteInteractions();
 
@@ -1169,7 +1176,9 @@ void NodeGraphView::Draw(const ImVec2& size) {
         Node* node = m_Graph.FindNode(static_cast<NodeId>(m_ContextNode.Get()));
         if (node) {
             const NodeDefinition* definition = NodeRegistry::Get().Find(node->type);
-            ImGui::TextColored(Ui::CategoryColor(definition ? definition->category : ""), "%s",
+            ImGui::TextColored(Ui::NodeAccentColor(definition ? definition->type : "",
+                                                    definition ? definition->category : ""),
+                               "%s",
                                definition ? definition->displayName.c_str() : node->type.c_str());
             ImGui::TextDisabled("%s", definition ? definition->ueClass.c_str() : "");
             ImGui::Separator();
@@ -1882,7 +1891,7 @@ void NodeGraphView::DrawNode(Node& node, TypeResolver& resolver) {
         }
     }
 
-    const ImVec4 categoryColor = Ui::CategoryColor(definition->category);
+    const ImVec4 categoryColor = Ui::NodeAccentColor(definition->type, definition->category);
     const float lineHeight = ImGui::GetTextLineHeight();
     std::string nodeTitle = definition->displayName;
     if (definition->isFunctionCall) {
@@ -2129,8 +2138,11 @@ void NodeGraphView::DrawCreateAndDeleteInteractions() {
                 ed::RejectNewItem(ImVec4(1.0f, 0.32f, 0.30f, 1.0f), 2.0f);
             } else if (ed::AcceptNewItem(Ui::PinTypeColor(outputPin->type), 2.0f)) {
                 if (Link* link = m_Graph.Connect(outputPin->id, inputPin->id, &reason)) {
+                    const ImU32 fallback = Ui::ToU32(Ui::PinTypeColor(outputPin->type));
                     ed::Link(ToEditorLink(link->id), ToEditorPin(link->fromPin),
-                             ToEditorPin(link->toPin), Ui::PinTypeColor(outputPin->type), 2.0f);
+                             ToEditorPin(link->toPin),
+                             ImGui::ColorConvertU32ToFloat4(Ui::PluginLinkColor(fallback)),
+                             Ui::PluginLinkThickness());
                 }
             }
         }
@@ -2298,7 +2310,8 @@ void NodeGraphView::DrawAddNodePopup() {
             }
             if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal)) {
                 ImGui::BeginTooltip();
-                ImGui::TextColored(Ui::CategoryColor(category), "%s", definition->ueClass.c_str());
+                ImGui::TextColored(Ui::NodeAccentColor(definition->type, definition->category),
+                                   "%s", definition->ueClass.c_str());
                 ImGui::TextWrapped("%s", Tr(definition->description.c_str()));
                 ImGui::EndTooltip();
             }

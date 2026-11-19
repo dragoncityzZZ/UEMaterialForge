@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <filesystem>
 #include <functional>
 #include <string>
@@ -79,6 +80,14 @@ private:
     static const char* HostRuntimeVersion(void* host);
     static int HostRegisterCommand(void* host, const char* name, const char* description,
                                    void (*callback)(const char*, void*), void* user);
+    static int HostSetTheme(void* host, const char* name);
+    static int HostSetStyleColor(void* host, const char* key, uint32_t rgba);
+    static int HostClearStyleColor(void* host, const char* key);
+    static int HostSetNodeColor(void* host, const char* key, uint32_t rgba);
+    static int HostClearNodeColor(void* host, const char* key);
+    static int HostSetLinkStyle(void* host, uint32_t rgba, float thickness, int shape);
+    static int HostClearLinkStyle(void* host);
+    static int HostSetUiScale(void* host, float scale);
     bool RegisterCommand(const std::string& pluginId, const std::string& name,
                          const std::string& description, void (*callback)(const char*, void*),
                          void* user);

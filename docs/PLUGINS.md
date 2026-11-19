@@ -68,6 +68,36 @@ the MaterialForge CMD console (`level` 0 = info, 1 = warning, 2 = error).
 
 `api->runtime_version(api->host)` returns the host version string.
 
+### Visual customization (API v1 appended fields)
+
+Newer hosts append optional UI functions to `MfPluginApi`. Check each pointer is
+non-null before use:
+
+```cpp
+if (api->set_theme) {
+    api->set_theme(api->host, "midnight"); // or "graphite"
+}
+if (api->set_style_color) {
+    api->set_style_color(api->host, "accent", 0xFFFFB060u); // 0xAABBGGRR
+}
+if (api->set_node_color) {
+    api->set_node_color(api->host, "Math", 0xFFD080FFu);       // node type
+    api->set_node_color(api->host, "Textures", 0xFF60B0FFu);   // or category
+}
+if (api->set_link_style) {
+    api->set_link_style(api->host, 0xFFFFB060u, 2.5f, 1);      // 0 curved, 1 straight
+}
+```
+
+Supported style keys are `text`, `text_disabled`, `window_bg`, `child_bg`,
+`popup_bg`, `border`, `frame_bg`, `button`, `button_hovered`, `button_active`,
+`header`, `header_hovered`, `tab`, `tab_selected`, and `accent`. Node colors can
+use a node type or a category; type overrides win. `set_ui_scale(host, scale)`
+changes the ImGui scale (clamped).
+
+The generated plugin includes a `<plugin-id>.style` command demonstrating these
+calls.
+
 ## Create a plugin project
 
 1. Open **Edit → Plugin Manager...**.

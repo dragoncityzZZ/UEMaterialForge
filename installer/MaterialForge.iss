@@ -3,7 +3,7 @@
 ; Payload: build\installer-payload (staged by scripts\build-installer.ps1)
 
 #define MyAppName "MaterialForge"
-#define MyAppVersion "2.6.5"
+#define MyAppVersion "2.6.6"
 #define MyAppPublisher "MaterialForge"
 #define MyAppExeName "MaterialForge.exe"
 #define PayloadDir "..\build\installer-payload"
@@ -31,7 +31,7 @@ PrivilegesRequired=admin
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 ChangesAssociations=yes
-VersionInfoVersion=2.6.5.0
+VersionInfoVersion=2.6.6.0
 VersionInfoDescription=MaterialForge UE5 Material Editor
 VersionInfoCompany={#MyAppPublisher}
 VersionInfoProductName={#MyAppName}
